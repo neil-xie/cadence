@@ -23,26 +23,94 @@
 package scanner
 
 import (
+	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/cadence/client"
+
 	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/mock"
+	"github.com/uber/cadence/common/resource"
+	"go.uber.org/cadence/mocks"
+	"go.uber.org/cadence/testsuite"
+	"go.uber.org/cadence/worker"
 )
 
-type scannerTestSuite struct {
-	suite.Suite
-	mockCtrl *gomock.Controller
+type mockCadenceClient struct {
+	client       *mocks.Client
+	domainClient *mocks.DomainClient
 }
 
-func TestScannerSuite(t *testing.T) {
-	suite.Run(t, new(scannerTestSuite))
+func TestNewScanner(t *testing.T) {
+	params := &BootstrapParams{}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockResource := resource.NewMockResource(ctrl)
+
+	// Create the scanner using the mocked resource
+	scanner := New(mockResource, params)
+
+	// Assertions
+	assert.NotNil(t, scanner, "Scanner should not be nil")
+	assert.IsType(t, &Scanner{}, scanner, "Should return a *Scanner instance")
 }
 
-func (s *scannerTestSuite) SetupTest() {
-	s.mockCtrl = gomock.NewController(s.T())
+func TestStartScanner(t *testing.T) {
+	params := &BootstrapParams{}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockResource := resource.NewMockResource(ctrl)
 
+	// Create the scanner using the mocked resource
+	scanner := New(mockResource, params)
+
+	// Start the scanner
+	err := scanner.Start()
+	assert.NoError(t, err, "Start should not return an error")
 }
 
-func (s *scannerTestSuite) TearDownTest() {
-	s.mockCtrl.Finish()
+func TestStartWorkflow(t *testing.T) {
+	params := &BootstrapParams{}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockResource := resource.NewMockResource(ctrl)
+
+	// Create the scanner using the mocked resource
+	scanner := New(mockResource, params)
+
+	clients := newMockCadenceClient()
+	clients.client.On("StartWorkflow",
+		mock.Anything, mock.Anything, mock.Anything).Return(nil, nil)
+
+	// Start the scanner
+	err := scanner.startWorkflow(clients.client, client.StartWorkflowOptions{}, "test-workflow", nil)
+	assert.NoError(t, err, "StartWorkflow should not return an error")
+}
+
+func TestNewScannerContext(t *testing.T) {
+	context := NewScannerContext(context.Background(), "test-workflow", scannerContext{})
+	assert.NotNil(t, context, "Scanner context should not be nil")
+}
+
+func TestGetScannerContext(t *testing.T) {
+	ctx := NewScannerContext(context.Background(), "test-workflow", scannerContext{})
+	s := &testsuite.WorkflowTestSuite{}
+	env := s.NewTestActivityEnvironment()
+	env.SetWorkerOptions(worker.Options{
+		BackgroundActivityContext: ctx,
+	})
+
+	env.RegisterActivity(getScannerContext)
+
+	_, err := env.ExecuteActivity(getScannerContext)
+	// this will fail since this workflow type is not valid
+	assert.Error(t, err)
+}
+
+func newMockCadenceClient() mockCadenceClient {
+	return mockCadenceClient{
+		client:       new(mocks.Client),
+		domainClient: new(mocks.DomainClient),
+	}
 }

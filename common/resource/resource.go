@@ -49,6 +49,8 @@ import (
 	persistenceClient "github.com/uber/cadence/common/persistence/client"
 )
 
+//go:generate mockgen -package $GOPACKAGE -source $GOFILE -destination resource_mock.go
+
 type (
 	// Resource is the interface which expose common resources
 	Resource interface {
