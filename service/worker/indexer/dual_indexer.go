@@ -67,3 +67,35 @@ func NewDualIndexer(
 		msgEncoder:  defaultEncoder,
 	}
 }
+
+func NewMigrationIndexer(
+	config *Config,
+	client messaging.Client,
+	osClient es.GenericClient,
+	visibilityName string,
+	logger log.Logger,
+	metricsClient metrics.Client,
+) *Indexer {
+	logger = logger.WithTags(tag.ComponentIndexer)
+
+	processor, err := newESProcessor(processorName, config, osClient, logger, metricsClient)
+	if err != nil {
+		logger.Fatal("Index ES processor state changed", tag.LifeCycleStartFailed, tag.Error(err))
+	}
+
+	consumer, err := client.NewConsumer(common.VisibilityAppName, getConsumerName(visibilityName)+"_os2")
+	if err != nil {
+		logger.Fatal("Index consumer state changed", tag.LifeCycleStartFailed, tag.Error(err))
+	}
+
+	return &Indexer{
+		config:      config,
+		esIndexName: visibilityName,
+		consumer:    consumer,
+		logger:      logger.WithTags(tag.ComponentIndexerProcessor),
+		scope:       metricsClient.Scope(metrics.IndexProcessorScope),
+		shutdownCh:  make(chan struct{}),
+		processors:  []ESProcessor{processor},
+		msgEncoder:  defaultEncoder,
+	}
+}
