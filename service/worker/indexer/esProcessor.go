@@ -24,6 +24,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/uber/cadence/.gen/go/indexer"
@@ -59,6 +60,7 @@ type (
 	kafkaMessageWithMetrics struct { // value of ESProcessorImpl.mapToKafkaMsg
 		message        messaging.Message
 		swFromAddToAck *metrics.Stopwatch // metric from message add to process, to message ack/nack
+		ackOnce        sync.Once          // Ensures Ack/Nack happens only once
 	}
 )
 
@@ -216,6 +218,11 @@ func (p *ESProcessorImpl) ackKafkaMsgHelper(key string, nack bool) {
 		return
 	}
 
+	// Check if message is already acknowledged
+	if kafkaMsg.isAcked {
+		return
+	}
+
 	if nack {
 		kafkaMsg.Nack()
 	} else {
@@ -358,15 +365,19 @@ func newKafkaMessageWithMetrics(kafkaMsg messaging.Message, stopwatch *metrics.S
 }
 
 func (km *kafkaMessageWithMetrics) Ack() {
-	km.message.Ack() //nolint:errcheck
-	if km.swFromAddToAck != nil {
-		km.swFromAddToAck.Stop()
-	}
+	km.ackOnce.Do(func() {
+		km.message.Ack() //nolint:errcheck
+		if km.swFromAddToAck != nil {
+			km.swFromAddToAck.Stop()
+		}
+	})
 }
 
 func (km *kafkaMessageWithMetrics) Nack() {
-	km.message.Nack() //nolint:errcheck
-	if km.swFromAddToAck != nil {
-		km.swFromAddToAck.Stop()
-	}
+	km.ackOnce.Do(func() {
+		km.message.Nack() //nolint:errcheck
+		if km.swFromAddToAck != nil {
+			km.swFromAddToAck.Stop()
+		}
+	})
 }
