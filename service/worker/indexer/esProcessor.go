@@ -218,18 +218,16 @@ func (p *ESProcessorImpl) ackKafkaMsgHelper(key string, nack bool) {
 		return
 	}
 
-	// Check if message is already acknowledged
-	if kafkaMsg.isAcked {
-		return
-	}
+	// Use sync.Once to ensure Ack/Nack is only called once
+	kafkaMsg.ackOnce.Do(func() {
+		if nack {
+			kafkaMsg.Nack() // Call Nack only once
+		} else {
+			kafkaMsg.Ack() // Call Ack only once
+		}
 
-	if nack {
-		kafkaMsg.Nack()
-	} else {
-		kafkaMsg.Ack()
-	}
-
-	p.mapToKafkaMsg.Remove(key)
+		p.mapToKafkaMsg.Remove(key)
+	})
 }
 
 func (p *ESProcessorImpl) getKafkaMsg(key string) (kafkaMsg *kafkaMessageWithMetrics, ok bool) {
@@ -365,19 +363,15 @@ func newKafkaMessageWithMetrics(kafkaMsg messaging.Message, stopwatch *metrics.S
 }
 
 func (km *kafkaMessageWithMetrics) Ack() {
-	km.ackOnce.Do(func() {
-		km.message.Ack() //nolint:errcheck
-		if km.swFromAddToAck != nil {
-			km.swFromAddToAck.Stop()
-		}
-	})
+	km.message.Ack() //nolint:errcheck
+	if km.swFromAddToAck != nil {
+		km.swFromAddToAck.Stop()
+	}
 }
 
 func (km *kafkaMessageWithMetrics) Nack() {
-	km.ackOnce.Do(func() {
-		km.message.Nack() //nolint:errcheck
-		if km.swFromAddToAck != nil {
-			km.swFromAddToAck.Stop()
-		}
-	})
+	km.message.Nack() //nolint:errcheck
+	if km.swFromAddToAck != nil {
+		km.swFromAddToAck.Stop()
+	}
 }
