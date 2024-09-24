@@ -60,7 +60,7 @@ type (
 	kafkaMessageWithMetrics struct { // value of ESProcessorImpl.mapToKafkaMsg
 		message        messaging.Message
 		swFromAddToAck *metrics.Stopwatch // metric from message add to process, to message ack/nack
-		ackOnce        sync.Once          // Ensures Ack/Nack happens only once
+		ackOnce        *sync.Once         // Ensures Ack/Nack happens only once
 	}
 )
 
@@ -359,6 +359,7 @@ func newKafkaMessageWithMetrics(kafkaMsg messaging.Message, stopwatch *metrics.S
 	return &kafkaMessageWithMetrics{
 		message:        kafkaMsg,
 		swFromAddToAck: stopwatch,
+		ackOnce:        new(sync.Once),
 	}
 }
 
