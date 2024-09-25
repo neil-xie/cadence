@@ -399,10 +399,11 @@ func (s *Service) startDualIndexer() {
 		s.GetLogger(),
 		s.GetMetricsClient(),
 	)*/
-	visibilityIndexer := indexer.NewIndexer(
+	visibilityIndexer := indexer.NewMigrationIndexer(
 		s.config.IndexerCfg,
 		s.GetMessagingClient(),
 		s.params.ESClient,
+		s.params.OSClient,
 		s.params.ESConfig.Indices[common.VisibilityAppName],
 		s.GetLogger(),
 		s.GetMetricsClient(),
@@ -412,21 +413,6 @@ func (s *Service) startDualIndexer() {
 		visibilityIndexer.Stop()
 		s.GetLogger().Fatal("fail to start indexer", tag.Error(err))
 	}
-
-	migrationIndexer := indexer.NewMigrationIndexer(
-		s.config.IndexerCfg,
-		s.GetMessagingClient(),
-		s.params.OSClient,
-		s.params.OSConfig.Indices[common.VisibilityAppName],
-		s.GetLogger(),
-		s.GetMetricsClient(),
-	)
-
-	if err := migrationIndexer.Start(); err != nil {
-		migrationIndexer.Stop()
-		s.GetLogger().Fatal("fail to start migration indexer", tag.Error(err))
-	}
-
 }
 
 func (s *Service) startArchiver() {

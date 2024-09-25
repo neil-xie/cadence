@@ -71,19 +71,20 @@ func NewDualIndexer(
 func NewMigrationIndexer(
 	config *Config,
 	client messaging.Client,
-	osClient es.GenericClient,
+	primaryClient es.GenericClient,
+	secondaryClient es.GenericClient,
 	visibilityName string,
 	logger log.Logger,
 	metricsClient metrics.Client,
 ) *Indexer {
 	logger = logger.WithTags(tag.ComponentIndexer)
 
-	processor, err := newESProcessor(processorName, config, osClient, logger, metricsClient)
+	processor, err := newESDualProcessor(processorName, config, primaryClient, secondaryClient, logger, metricsClient)
 	if err != nil {
 		logger.Fatal("Index ES processor state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
 
-	consumer, err := client.NewConsumer(common.VisibilityAppName, getConsumerName(visibilityName)+"_os2")
+	consumer, err := client.NewConsumer(common.VisibilityAppName, getConsumerName(visibilityName))
 	if err != nil {
 		logger.Fatal("Index consumer state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
