@@ -217,7 +217,7 @@ func (h *handlerImpl) PollForActivityTask(
 	response, err := h.engine.PollForActivityTask(hCtx, request)
 	if response != nil {
 		if response.AutoConfigHint != nil {
-			h.logger.Info(fmt.Sprintf("activity config hint: %+v", resp.AutoConfigHint))
+			h.logger.Info(fmt.Sprintf("activity config hint: %+v", response.AutoConfigHint))
 		} else {
 			h.logger.Info("activity config hint is nil")
 		}
@@ -264,7 +264,7 @@ func (h *handlerImpl) PollForDecisionTask(
 	response, err := h.engine.PollForDecisionTask(hCtx, request)
 	if response != nil {
 		if response.AutoConfigHint != nil {
-			h.logger.Info(fmt.Sprintf("decision config hint: %+v", resp.AutoConfigHint))
+			h.logger.Info(fmt.Sprintf("decision config hint: %+v", response.AutoConfigHint))
 		} else {
 			h.logger.Info("decision config hint is nil")
 		}

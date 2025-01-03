@@ -418,6 +418,10 @@ func (tm *taskMatcherImpl) Poll(ctx context.Context, isolationGroup string) (*In
 				EnableAutoConfig:   tm.config.EnableClientAutoConfig(),
 				PollerWaitTimeInMs: time.Since(startT).Milliseconds(),
 			}
+			tm.log.Info(fmt.Sprintf("=========activity config hint: %+v", task.AutoConfigHint))
+			tm.log.Info(fmt.Sprintf("=========activity config hint in task: %+v", task))
+		} else {
+			tm.log.Info("nil task")
 		}
 	}()
 
