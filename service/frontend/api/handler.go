@@ -369,6 +369,14 @@ func (wh *WorkflowHandler) PollForActivityTask(
 		return nil, nil
 	}
 
+	if matchingResp != nil {
+		if matchingResp.AutoConfigHint != nil {
+			wh.GetLogger().Info(fmt.Sprintf("activity config hint: %+v", *matchingResp.AutoConfigHint))
+		} else {
+			wh.GetLogger().Info("activity config hint is nil")
+		}
+	}
+
 	return &types.PollForActivityTaskResponse{
 		TaskToken:                       matchingResp.TaskToken,
 		WorkflowExecution:               matchingResp.WorkflowExecution,
@@ -515,6 +523,13 @@ func (wh *WorkflowHandler) PollForDecisionTask(
 	resp, err = wh.createPollForDecisionTaskResponse(ctx, scope, domainID, matchingResp, matchingResp.GetBranchToken())
 	if err != nil {
 		return nil, err
+	}
+	if resp != nil {
+		if resp.AutoConfigHint != nil {
+			wh.GetLogger().Info(fmt.Sprintf("decision auto config hint: %+v", *resp.AutoConfigHint))
+		} else {
+			wh.GetLogger().Info("decision auto config hint is nil")
+		}
 	}
 
 	return resp, nil
