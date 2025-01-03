@@ -22,6 +22,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/uber/cadence/common"
@@ -214,6 +215,15 @@ func (h *handlerImpl) PollForActivityTask(
 	}
 
 	response, err := h.engine.PollForActivityTask(hCtx, request)
+	if response != nil {
+		if response.AutoConfigHint != nil {
+			h.logger.Info(fmt.Sprintf("activity config hint: %+v", resp.AutoConfigHint))
+		} else {
+			h.logger.Info("activity config hint is nil")
+		}
+	} else {
+		h.logger.Info("response is nil")
+	}
 	return response, hCtx.handleErr(err)
 }
 
@@ -252,6 +262,15 @@ func (h *handlerImpl) PollForDecisionTask(
 	}
 
 	response, err := h.engine.PollForDecisionTask(hCtx, request)
+	if response != nil {
+		if response.AutoConfigHint != nil {
+			h.logger.Info(fmt.Sprintf("decision config hint: %+v", resp.AutoConfigHint))
+		} else {
+			h.logger.Info("decision config hint is nil")
+		}
+	} else {
+		h.logger.Info("response is nil")
+	}
 	return response, hCtx.handleErr(err)
 }
 
