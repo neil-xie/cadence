@@ -410,12 +410,12 @@ func (s *Service) startMigrationDualIndexer() {
 	)
 	if err := visibilityDualIndexer.SourceIndexer.Start(); err != nil {
 		visibilityDualIndexer.SourceIndexer.Stop()
-		s.GetLogger().Fatal("fail to start source indexer", tag.Error(err))
+		s.GetLogger().Fatal("fail to start indexer", tag.Error(err))
 	}
 
 	if err := visibilityDualIndexer.DestIndexer.Start(); err != nil {
 		visibilityDualIndexer.DestIndexer.Stop()
-		s.GetLogger().Fatal("fail to start dest indexer", tag.Error(err))
+		s.GetLogger().Fatal("fail to start indexer", tag.Error(err))
 	}
 }
 
