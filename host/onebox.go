@@ -1006,6 +1006,7 @@ func (c *cadenceImpl) startWorkerIndexer(params *resource.Params, service Servic
 		c.messagingClient,
 		c.esClient,
 		c.esConfig.Indices[common.VisibilityAppName],
+		c.esConfig.ConsumerName,
 		c.logger,
 		service.GetMetricsClient())
 	if err := c.indexer.Start(); err != nil {

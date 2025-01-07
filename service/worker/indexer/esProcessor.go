@@ -135,7 +135,10 @@ func (p *ESProcessorImpl) bulkAfterAction(id int64, requests []bulk.GenericBulka
 
 		isRetryable := isResponseRetriable(err.Status)
 		for _, request := range requests {
-			if !isRetryable {
+			if isRetryable {
+				// retryable errors will be retried by the bulk processor
+				p.logger.Error("ES request failed", tag.ESRequest(request.String()))
+			} else {
 				key := p.retrieveKafkaKey(request)
 				if key == "" {
 					continue
@@ -152,26 +155,31 @@ func (p *ESProcessorImpl) bulkAfterAction(id int64, requests []bulk.GenericBulka
 				// 404 means the document does not exist
 				// 409 means means the document's version does not match (or if the document has been updated or deleted by another process)
 				// this can happen during the data migration, the doc was deleted in the old index but not exists in the new index
-				if err.Status == 409 || err.Status == 404 {
-					status := err.Status
+				if err.Status == 409 {
+					p.logger.Info("Request encountered a version conflict. Acknowledging to prevent retry.",
+						tag.ESResponseStatus(err.Status), tag.ESRequest(request.String()),
+						tag.WorkflowID(wid),
+						tag.WorkflowRunID(rid),
+						tag.WorkflowDomainID(domainID))
+					p.ackKafkaMsg(key)
+				} else if err.Status == 404 {
 					req, err := request.Source()
-					if err == nil {
-						if p.isDeleteRequest(req) {
-							p.logger.Info("Delete request encountered a version conflict. Acknowledging to prevent retry.",
-								tag.ESResponseStatus(status), tag.ESRequest(request.String()),
-								tag.WorkflowID(wid),
-								tag.WorkflowRunID(rid),
-								tag.WorkflowDomainID(domainID))
-							p.ackKafkaMsg(key)
-						}
+					if err == nil && p.isDeleteRequest(req) {
+						p.logger.Info("Document has been deleted. Acknowledging to prevent retry.",
+							tag.ESResponseStatus(404), tag.ESRequest(request.String()),
+							tag.WorkflowID(wid),
+							tag.WorkflowRunID(rid),
+							tag.WorkflowDomainID(domainID))
+						p.ackKafkaMsg(key)
 					} else {
 						p.logger.Error("Get request source err.", tag.Error(err), tag.ESRequest(request.String()))
 						p.scope.IncCounter(metrics.ESProcessorCorruptedData)
+						p.nackKafkaMsg(key)
 					}
+				} else {
+					// For all other non-retryable errors, nack the message
+					p.nackKafkaMsg(key)
 				}
-				p.nackKafkaMsg(key)
-			} else {
-				p.logger.Error("ES request failed", tag.ESRequest(request.String()))
 			}
 			p.scope.IncCounter(metrics.ESProcessorFailures)
 		}

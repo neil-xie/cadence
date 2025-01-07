@@ -37,6 +37,8 @@ func NewMigrationDualIndexer(config *Config,
 	secondaryClient es.GenericClient,
 	primaryVisibilityName string,
 	secondaryVisibilityName string,
+	primaryConsumerName string,
+	secondaryConsumerName string,
 	logger log.Logger,
 	metricsClient metrics.Client) *DualIndexer {
 
@@ -47,7 +49,10 @@ func NewMigrationDualIndexer(config *Config,
 		logger.Fatal("Index ES processor state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
 
-	consumer, err := client.NewConsumer(common.VisibilityAppName, getConsumerName(primaryVisibilityName))
+	if primaryConsumerName == "" {
+		primaryConsumerName = getConsumerName(primaryVisibilityName)
+	}
+	consumer, err := client.NewConsumer(common.VisibilityAppName, primaryConsumerName)
 	if err != nil {
 		logger.Fatal("Index consumer state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
@@ -65,12 +70,15 @@ func NewMigrationDualIndexer(config *Config,
 
 	secondaryVisibilityProcessor, err := newESProcessor(processorName, config, secondaryClient, logger, metricsClient)
 	if err != nil {
-		logger.Fatal("Secondary Index ES processor state changed", tag.LifeCycleStartFailed, tag.Error(err))
+		logger.Fatal("Migration Index ES processor state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
 
-	secondaryConsumer, err := client.NewConsumer(common.VisibilityAppName, getConsumerName(secondaryVisibilityName+"-os"))
+	if secondaryConsumerName == "" {
+		secondaryConsumerName = getConsumerName(primaryVisibilityName)
+	}
+	secondaryConsumer, err := client.NewConsumer(common.VisibilityAppName, secondaryConsumerName)
 	if err != nil {
-		logger.Fatal("Secondary Index consumer state changed", tag.LifeCycleStartFailed, tag.Error(err))
+		logger.Fatal("Migration Index consumer state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
 
 	destIndexer := &Indexer{

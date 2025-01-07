@@ -58,6 +58,8 @@ type (
 		// optional to add custom headers
 		CustomHeaders map[string]string   `yaml:"customHeaders,omitempty"`
 		Migration     VisibilityMigration `yaml:"migration"`
+		// optional to if not using default consumer name
+		ConsumerName string `yaml:"consumerName"`
 	}
 
 	// AWSSigning contains config to enable signing,

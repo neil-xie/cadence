@@ -97,6 +97,7 @@ func NewIndexer(
 	client messaging.Client,
 	visibilityClient es.GenericClient,
 	visibilityName string,
+	consumerName string,
 	logger log.Logger,
 	metricsClient metrics.Client,
 ) *Indexer {
@@ -107,7 +108,11 @@ func NewIndexer(
 		logger.Fatal("Index ES processor state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}
 
-	consumer, err := client.NewConsumer(common.VisibilityAppName, getConsumerName(visibilityName))
+	if consumerName == "" {
+		consumerName = getConsumerName(visibilityName)
+	}
+
+	consumer, err := client.NewConsumer(common.VisibilityAppName, consumerName)
 	if err != nil {
 		logger.Fatal("Index consumer state changed", tag.LifeCycleStartFailed, tag.Error(err))
 	}

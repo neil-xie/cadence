@@ -385,6 +385,7 @@ func (s *Service) startIndexer() {
 		s.GetMessagingClient(),
 		s.params.ESClient,
 		s.params.ESConfig.Indices[common.VisibilityAppName],
+		s.params.ESConfig.ConsumerName,
 		s.GetLogger(),
 		s.GetMetricsClient(),
 	)
@@ -402,6 +403,8 @@ func (s *Service) startMigrationDualIndexer() {
 		s.params.OSClient,
 		s.params.ESConfig.Indices[common.VisibilityAppName],
 		s.params.OSConfig.Indices[common.VisibilityAppName],
+		s.params.ESConfig.ConsumerName,
+		s.params.OSConfig.ConsumerName,
 		s.GetLogger(),
 		s.GetMetricsClient(),
 	)
