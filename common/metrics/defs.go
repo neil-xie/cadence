@@ -894,6 +894,9 @@ const (
 	// ShardDistributorClientGetShardOwnerScope tracks GetShardOwner calls made by service to shard distributor
 	ShardDistributorClientGetShardOwnerScope
 
+	// ShardDistributorClientWatchNamespaceStateScope tracks WatchNamespaceState calls made by service to shard distributor
+	ShardDistributorClientWatchNamespaceStateScope
+
 	// ShardDistributorExecutorClientHeartbeatScope tracks Heartbeat calls made by executor to shard distributor
 	ShardDistributorExecutorClientHeartbeatScope
 
@@ -1869,8 +1872,9 @@ var ScopeDefs = map[ServiceIdx]map[ScopeIdx]scopeDefinition{
 		P2PRPCPeerChooserScope:       {operation: "P2PRPCPeerChooser"},
 		PartitionConfigProviderScope: {operation: "PartitionConfigProvider"},
 
-		ShardDistributorClientGetShardOwnerScope:     {operation: "ShardDistributorClientGetShardOwner"},
-		ShardDistributorExecutorClientHeartbeatScope: {operation: "ShardDistributorExecutorHeartbeat"},
+		ShardDistributorClientGetShardOwnerScope:       {operation: "ShardDistributorClientGetShardOwner"},
+		ShardDistributorClientWatchNamespaceStateScope: {operation: "ShardDistributorClientWatchNamespaceState"},
+		ShardDistributorExecutorClientHeartbeatScope:   {operation: "ShardDistributorExecutorHeartbeat"},
 
 		LoadBalancerScope: {operation: "RRLoadBalancer"},
 
