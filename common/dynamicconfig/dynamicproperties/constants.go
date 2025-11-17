@@ -1095,7 +1095,7 @@ const (
 	// Allowed filters: N/A
 	ReplicatorCacheCapacity
 	// ReplicatorCacheMaxSize is the max size of the replication cache in bytes
-	// KeyName: history.replicatorCacheSize
+	// KeyName: history.replicatorCacheMaxSize
 	// Value type: Int
 	// Default value: 0
 	// Allowed filters: N/A
@@ -3747,7 +3747,7 @@ var IntKeys = map[IntKey]DynamicInt{
 		DefaultValue: 0,
 	},
 	ReplicatorCacheMaxSize: {
-		KeyName:      "history.replicatorCacheSize",
+		KeyName:      "history.replicatorCacheMaxSize",
 		Description:  "ReplicatorCacheMaxSize is the max size of the replication cache in bytes",
 		DefaultValue: 0,
 	},

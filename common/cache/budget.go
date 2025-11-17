@@ -274,6 +274,8 @@ func NewBudgetManager(
 		throttledLogger = log.NewThrottledLogger(logger, dynamicproperties.GetIntPropertyFn(1))
 	}
 
+	logger.Info("Budget manager started", tag.Name(name))
+
 	mgr := &manager{
 		name:                        name,
 		maxBytes:                    maxBytes,
