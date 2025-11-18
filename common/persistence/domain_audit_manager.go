@@ -112,6 +112,9 @@ func (m *domainAuditManagerImpl) CreateDomainAuditLog(
 		stateAfterBlob = blob
 	}
 
+	// Get TTL from dynamic config using domain ID
+	ttlDuration := m.dc.DomainAuditLogTTL(request.DomainID)
+
 	return m.persistence.CreateDomainAuditLog(ctx, &InternalCreateDomainAuditLogRequest{
 		DomainID:        request.DomainID,
 		EventID:         request.EventID,
@@ -123,6 +126,7 @@ func (m *domainAuditManagerImpl) CreateDomainAuditLog(
 		Identity:        request.Identity,
 		IdentityType:    request.IdentityType,
 		Comment:         request.Comment,
+		TTLSeconds:      int64(ttlDuration.Seconds()),
 	})
 }
 
