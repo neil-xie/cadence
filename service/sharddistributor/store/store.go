@@ -52,6 +52,9 @@ func NopGuard() GuardFunc {
 type AssignShardsRequest struct {
 	// NewState is the new state of the namespace, containing the new assignments of shards to executors.
 	NewState *NamespaceState
+	// ExecutorsToDelete maps executor IDs to their expected ModRevision for deletion.
+	// The ModRevision is used to ensure the executor's assigned state hasn't changed since we decided to delete it.
+	ExecutorsToDelete map[string]int64
 }
 
 // Store is a composite interface that combines all storage capabilities.
