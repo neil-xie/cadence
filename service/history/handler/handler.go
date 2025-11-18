@@ -137,18 +137,16 @@ func (h *handlerImpl) Start() {
 		h.config,
 	)
 
-	if h.config.EnableReplicationBudgetManager() {
-		h.replicationBudgetManager = cache.NewBudgetManager(
-			"replication-budget-manager",
-			h.config.ReplicationBudgetManagerMaxSizeBytes,
-			h.config.ReplicationBudgetManagerMaxSizeCount,
-			cache.AdmissionOptimistic,
-			0,
-			h.GetMetricsClient().Scope(metrics.ReplicatorCacheManagerScope),
-			h.GetLogger(),
-			h.config.ReplicationBudgetManagerSoftCapThreshold,
-		)
-	}
+	h.replicationBudgetManager = cache.NewBudgetManager(
+		"replication-budget-manager",
+		h.config.ReplicationBudgetManagerMaxSizeBytes,
+		h.config.ReplicationBudgetManagerMaxSizeCount,
+		cache.AdmissionOptimistic,
+		0,
+		h.GetMetricsClient().Scope(metrics.ReplicatorCacheManagerScope),
+		h.GetLogger(),
+		h.config.ReplicationBudgetManagerSoftCapThreshold,
+	)
 
 	h.controller = shard.NewShardController(
 		h.Resource,

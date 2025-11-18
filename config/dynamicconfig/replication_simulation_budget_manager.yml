@@ -17,11 +17,6 @@ frontend.failoverCoolDown:
 history.ReplicationTaskProcessorStartWait: # default is 5s. repl task processor sleeps this much before processing received messages.
   - value: 10ms
 
-# Budget Manager Configuration - Enable the manager
-history.enableReplicationBudgetManager:
-  - value: true
-    constraints: {}
-
 # Set budget limits for testing
 # Max size in bytes - set to a moderate value to test capacity enforcement
 history.replicationBudgetManagerMaxSizeBytes:

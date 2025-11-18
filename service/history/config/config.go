@@ -191,7 +191,6 @@ type Config struct {
 	ReplicationBudgetManagerMaxSizeBytes     dynamicproperties.IntPropertyFn
 	ReplicationBudgetManagerMaxSizeCount     dynamicproperties.IntPropertyFn
 	ReplicationBudgetManagerSoftCapThreshold dynamicproperties.FloatPropertyFn
-	EnableReplicationBudgetManager           dynamicproperties.BoolPropertyFn
 
 	// System Limits
 	MaximumBufferedEventsBatch dynamicproperties.IntPropertyFn
@@ -491,7 +490,6 @@ func New(dc *dynamicconfig.Collection, numberOfShards int, maxMessageSize int, i
 		ReplicationBudgetManagerMaxSizeBytes:     dc.GetIntProperty(dynamicproperties.ReplicationBudgetManagerMaxSizeBytes),
 		ReplicationBudgetManagerMaxSizeCount:     dc.GetIntProperty(dynamicproperties.ReplicationBudgetManagerMaxSizeCount),
 		ReplicationBudgetManagerSoftCapThreshold: dc.GetFloat64Property(dynamicproperties.ReplicationBudgetManagerSoftCapThreshold),
-		EnableReplicationBudgetManager:           dc.GetBoolProperty(dynamicproperties.EnableReplicationBudgetManager),
 
 		MaximumBufferedEventsBatch:      dc.GetIntProperty(dynamicproperties.MaximumBufferedEventsBatch),
 		MaximumSignalsPerExecution:      dc.GetIntPropertyFilteredByDomain(dynamicproperties.MaximumSignalsPerExecution),
