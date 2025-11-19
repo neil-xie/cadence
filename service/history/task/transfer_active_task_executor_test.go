@@ -2242,6 +2242,17 @@ func createRecordWorkflowExecutionStartedRequest(
 			"Header_context_key": contextValueJSONString,
 		}
 	}
+	// Add CronSchedule to search attributes if it's a cron workflow
+	if len(executionInfo.CronSchedule) > 0 {
+		cronScheduleBytes, err := json.Marshal(executionInfo.CronSchedule)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if searchAttributes == nil {
+			searchAttributes = make(map[string][]byte)
+		}
+		searchAttributes[definition.CronSchedule] = cronScheduleBytes
+	}
 	return &persistence.RecordWorkflowExecutionStartedRequest{
 		Domain:                domainName,
 		DomainUUID:            taskInfo.DomainID,
@@ -2292,6 +2303,17 @@ func createRecordWorkflowExecutionClosedRequest(
 		searchAttributes = map[string][]byte{
 			"Header_context_key": contextValueJSONString,
 		}
+	}
+	// Add CronSchedule to search attributes if it's a cron workflow
+	if len(executionInfo.CronSchedule) > 0 {
+		cronScheduleBytes, err := json.Marshal(executionInfo.CronSchedule)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if searchAttributes == nil {
+			searchAttributes = make(map[string][]byte)
+		}
+		searchAttributes[definition.CronSchedule] = cronScheduleBytes
 	}
 	return &persistence.RecordWorkflowExecutionClosedRequest{
 		Domain:                domainName,
