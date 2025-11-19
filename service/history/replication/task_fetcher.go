@@ -34,6 +34,7 @@ import (
 	"github.com/uber/cadence/common/cluster"
 	"github.com/uber/cadence/common/log"
 	"github.com/uber/cadence/common/log/tag"
+	"github.com/uber/cadence/common/metrics"
 	"github.com/uber/cadence/common/quotas"
 	"github.com/uber/cadence/common/types"
 	"github.com/uber/cadence/service/history/config"
@@ -71,6 +72,7 @@ type (
 		sourceCluster  string
 		config         *config.Config
 		logger         log.Logger
+		metricsScope   metrics.Scope
 		remotePeer     admin.Client
 		rateLimiter    quotas.Limiter
 		timeSource     clock.TimeSource
@@ -99,6 +101,7 @@ func NewTaskFetchers(
 	config *config.Config,
 	clusterMetadata cluster.Metadata,
 	clientBean client.Bean,
+	metricsClient metrics.Client,
 ) (TaskFetchers, error) {
 	currentCluster := clusterMetadata.GetCurrentClusterName()
 	var fetchers []TaskFetcher
@@ -113,6 +116,7 @@ func NewTaskFetchers(
 			currentCluster,
 			config,
 			remoteFrontendClient,
+			metricsClient,
 		)
 		fetchers = append(fetchers, fetcher)
 	}
@@ -160,12 +164,14 @@ func newReplicationTaskFetcher(
 	currentCluster string,
 	config *config.Config,
 	sourceFrontend admin.Client,
+	metricsClient metrics.Client,
 ) TaskFetcher {
 	ctx, cancel := context.WithCancel(context.Background())
 	fetcher := &taskFetcherImpl{
 		status:         common.DaemonStatusInitialized,
 		config:         config,
 		logger:         logger.WithTags(tag.ClusterName(sourceCluster)),
+		metricsScope:   metricsClient.Scope(metrics.ReplicationTaskFetcherScope, metrics.TargetClusterTag(sourceCluster)),
 		remotePeer:     sourceFrontend,
 		currentCluster: currentCluster,
 		sourceCluster:  sourceCluster,
@@ -210,7 +216,13 @@ func (f *taskFetcherImpl) Stop() {
 
 // fetchTasks collects getReplicationTasks request from shards and send out aggregated request to source frontend.
 func (f *taskFetcherImpl) fetchTasks() {
+	startTime := f.timeSource.Now()
 	defer f.wg.Done()
+	defer func() {
+		totalLatency := f.timeSource.Now().Sub(startTime)
+		f.metricsScope.ExponentialHistogram(metrics.ExponentialReplicationTaskFetchLatency, totalLatency)
+	}()
+
 	timer := f.timeSource.NewTimer(backoff.JitDuration(
 		f.config.ReplicationTaskFetcherAggregationInterval(),
 		f.config.ReplicationTaskFetcherTimerJitterCoefficient(),
@@ -272,6 +284,12 @@ func (f *taskFetcherImpl) fetchAndDistributeTasks(requestByShard map[int32]*requ
 
 		return err
 	}
+
+	totalTasks := 0
+	for _, messages := range messagesByShard {
+		totalTasks += len(messages.ReplicationTasks)
+	}
+	f.metricsScope.UpdateGauge(metrics.ReplicationTasksFetchedSize, float64(totalTasks))
 
 	f.logger.Debug("Successfully fetched replication tasks.", tag.Counter(len(messagesByShard)))
 	for shardID, tasks := range messagesByShard {

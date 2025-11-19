@@ -84,6 +84,7 @@ func (s *taskFetcherSuite) SetupTest() {
 		"active",
 		s.config,
 		s.frontendClient,
+		metrics.NewNoopMetricsClient(),
 	).(*taskFetcherImpl)
 }
 
@@ -269,7 +270,7 @@ func TestTaskFetchers(t *testing.T) {
 	cfg := config.NewForTest()
 
 	mockBean.EXPECT().GetRemoteAdminClient(cluster.TestAlternativeClusterName).Return(mockAdminClient, nil)
-	fetchers, err := NewTaskFetchers(logger, cfg, cluster.TestActiveClusterMetadata, mockBean)
+	fetchers, err := NewTaskFetchers(logger, cfg, cluster.TestActiveClusterMetadata, mockBean, metrics.NewNoopMetricsClient())
 	assert.NoError(t, err)
 	assert.NotNil(t, fetchers)
 	assert.Len(t, fetchers.GetFetchers(), len(cluster.TestActiveClusterMetadata.GetRemoteClusterInfo()))

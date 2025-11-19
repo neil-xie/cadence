@@ -121,6 +121,7 @@ func (h *handlerImpl) Start() {
 		h.config,
 		h.GetClusterMetadata(),
 		h.GetClientBean(),
+		h.GetMetricsClient(),
 	)
 	if err != nil {
 		h.GetLogger().Fatal("Creating replication task fetchers failed", tag.Error(err))

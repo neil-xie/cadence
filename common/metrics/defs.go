@@ -2742,6 +2742,8 @@ const (
 	ReplicationTaskCleanupFailure
 	ReplicationTaskLatency
 	ExponentialReplicationTaskLatency
+	ExponentialReplicationTaskFetchLatency
+	ReplicationTasksFetchedSize
 	MutableStateChecksumMismatch
 	MutableStateChecksumInvalidated
 	FailoverMarkerCount
@@ -3535,6 +3537,8 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		ReplicationTaskCleanupFailure:                                {metricName: "replication_task_cleanup_failed", metricType: Counter},
 		ReplicationTaskLatency:                                       {metricName: "replication_task_latency", metricType: Timer},
 		ExponentialReplicationTaskLatency:                            {metricName: "replication_task_latency_ns", metricType: Histogram, exponentialBuckets: Mid1ms24h},
+		ExponentialReplicationTaskFetchLatency:                       {metricName: "replication_task_fetch_latency_ns", metricType: Histogram, exponentialBuckets: Mid1ms24h},
+		ReplicationTasksFetchedSize:                                  {metricName: "replication_tasks_fetched_size", metricType: Gauge},
 		MutableStateChecksumMismatch:                                 {metricName: "mutable_state_checksum_mismatch", metricType: Counter},
 		MutableStateChecksumInvalidated:                              {metricName: "mutable_state_checksum_invalidated", metricType: Counter},
 		FailoverMarkerCount:                                          {metricName: "failover_marker_count", metricType: Counter},
