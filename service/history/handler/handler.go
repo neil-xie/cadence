@@ -143,7 +143,7 @@ func (h *handlerImpl) Start() {
 		h.config.ReplicationBudgetManagerMaxSizeCount,
 		cache.AdmissionOptimistic,
 		0,
-		h.GetMetricsClient().Scope(metrics.ReplicatorCacheManagerScope),
+		h.GetMetricsClient().Scope(metrics.ReplicatorCacheManagerScope, metrics.HostTag(h.config.HostName)),
 		h.GetLogger(),
 		h.config.ReplicationBudgetManagerSoftCapThreshold,
 	)
