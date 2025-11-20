@@ -202,7 +202,7 @@ func (s *ElasticSearchIntegrationSuite) TestListWorkflowByClusterAttribute() {
 	s.Equal("us-east", descResp.WorkflowExecutionInfo.ActiveClusterSelectionPolicy.GetClusterAttribute().GetName())
 
 	query := `ClusterAttributeScope = "region" and ClusterAttributeName = "us-east"`
-	s.testHelperForReadOnceWithDomain(s.ActiveActiveDomainName, we.GetRunID(), query, false, false)
+	s.testHelperForReadOnceWithDomain(s.ActiveActiveDomainName, we.GetRunID(), query, false, false, false)
 }
 
 func (s *ElasticSearchIntegrationSuite) startWorkflow(
