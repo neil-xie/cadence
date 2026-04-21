@@ -2378,10 +2378,12 @@ const (
 	HistoryCount
 	HistoryCountHistogram
 	EventBlobSize
+	EventBlobSizeHistogram
 
 	EventBlobSizeExceedLimit
 
 	DecisionResultCount
+	DecisionResultCountHistogram
 
 	ArchivalConfigFailures
 	ActiveClusterGauge
@@ -2420,7 +2422,9 @@ const (
 
 	ParallelTaskSubmitRequest
 	ParallelTaskSubmitLatency
+	ParallelTaskSubmitLatencyHistogram
 	ParallelTaskTaskProcessingLatency
+	ParallelTaskTaskProcessingLatencyHistogram
 
 	PriorityTaskSubmitRequest
 	PriorityTaskSubmitLatency
@@ -2687,6 +2691,7 @@ const (
 	MultipleCompletionDecisionsCounter
 	FailedDecisionsCounter
 	DecisionAttemptTimer
+	DecisionAttemptHistogram
 	DecisionRetriesExceededCounter
 	StaleMutableStateCounter
 	DataInconsistentCounter
@@ -2708,10 +2713,12 @@ const (
 	NewTimerNotifyCounter
 	AcquireShardsCounter
 	AcquireShardsLatency
+	AcquireShardsLatencyHistogram
 	ShardClosedCounter
 	ShardItemCreatedCounter
 	ShardItemRemovedCounter
 	ShardItemAcquisitionLatency
+	ShardItemAcquisitionLatencyHistogram
 	ShardInfoReplicationPendingTasksTimer
 	ShardInfoTransferActivePendingTasksTimer
 	ShardInfoTransferStandbyPendingTasksTimer
@@ -2734,7 +2741,9 @@ const (
 	NumShardsGauge
 	GetEngineForShardErrorCounter
 	GetEngineForShardLatency
+	GetEngineForShardLatencyHistogram
 	RemoveEngineForShardLatency
+	RemoveEngineForShardLatencyHistogram
 	CompleteDecisionWithStickyEnabledCounter
 	CompleteDecisionWithStickyDisabledCounter
 	DecisionHeartbeatTimeoutCounter
@@ -2790,14 +2799,22 @@ const (
 	BufferedEventsCount
 	BufferedEventsCountHistogram
 	TransferTasksCount
+	TransferTasksCountHistogram
 	TimerTasksCount
+	TimerTasksCountHistogram
 	CrossClusterTasksCount
 	ReplicationTasksCount
+	ReplicationTasksCountHistogram
 	DeleteActivityInfoCount
+	DeleteActivityInfoCountHistogram
 	DeleteTimerInfoCount
+	DeleteTimerInfoCountHistogram
 	DeleteChildInfoCount
+	DeleteChildInfoCountHistogram
 	DeleteSignalInfoCount
+	DeleteSignalInfoCountHistogram
 	DeleteRequestCancelInfoCount
+	DeleteRequestCancelInfoCountHistogram
 	WorkflowRetryBackoffTimerCount
 	WorkflowCronBackoffTimerCount
 	WorkflowCleanupDeleteCount
@@ -2923,7 +2940,9 @@ const (
 	WorkflowIDCacheSizeGauge
 	WorkflowIDCacheRequestsExternalRatelimitedCounter
 	WorkflowIDCacheRequestsExternalMaxRequestsPerSecondsTimer
+	WorkflowIDCacheRequestsExternalMaxRequestsPerSecondsHistogram
 	WorkflowIDCacheRequestsInternalMaxRequestsPerSecondsTimer
+	WorkflowIDCacheRequestsInternalMaxRequestsPerSecondsHistogram
 	WorkflowIDCacheRequestsInternalRatelimitedCounter
 	VirtualQueueCountGauge
 	VirtualQueuePausedGauge
@@ -3261,7 +3280,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		HistoryCountHistogram:                                        {metricName: "history_count_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		EventBlobSizeExceedLimit:                                     {metricName: "blob_size_exceed_limit", metricType: Counter},
 		EventBlobSize:                                                {metricName: "event_blob_size", metricType: Timer},
+		EventBlobSizeHistogram:                                       {metricName: "event_blob_size_counts", metricType: Histogram, intExponentialBuckets: Mid8B16MB},
 		DecisionResultCount:                                          {metricName: "decision_result_count", metricType: Timer},
+		DecisionResultCountHistogram:                                 {metricName: "decision_result_count_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ArchivalConfigFailures:                                       {metricName: "archivalconfig_failures", metricType: Counter},
 		ActiveClusterGauge:                                           {metricName: "active_cluster", metricType: Gauge},
 		ElasticsearchRequests:                                        {metricName: "elasticsearch_requests", metricType: Counter},
@@ -3295,7 +3316,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		SequentialTaskTaskProcessingLatency:                          {metricName: "sequentialtask_task_processing_latency", metricType: Timer},
 		ParallelTaskSubmitRequest:                                    {metricName: "paralleltask_submit_request", metricType: Counter},
 		ParallelTaskSubmitLatency:                                    {metricName: "paralleltask_submit_latency", metricType: Timer},
+		ParallelTaskSubmitLatencyHistogram:                           {metricName: "paralleltask_submit_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ParallelTaskTaskProcessingLatency:                            {metricName: "paralleltask_task_processing_latency", metricType: Timer},
+		ParallelTaskTaskProcessingLatencyHistogram:                   {metricName: "paralleltask_task_processing_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		PriorityTaskSubmitRequest:                                    {metricName: "prioritytask_submit_request", metricType: Counter},
 		PriorityTaskSubmitLatency:                                    {metricName: "prioritytask_submit_latency", metricType: Timer},
 		KafkaConsumerMessageIn:                                       {metricName: "kafka_consumer_message_in", metricType: Counter},
@@ -3590,6 +3613,7 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		MultipleCompletionDecisionsCounter:                           {metricName: "multiple_completion_decisions", metricType: Counter},
 		FailedDecisionsCounter:                                       {metricName: "failed_decisions", metricType: Counter},
 		DecisionAttemptTimer:                                         {metricName: "decision_attempt", metricType: Timer},
+		DecisionAttemptHistogram:                                     {metricName: "decision_attempt_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		DecisionRetriesExceededCounter:                               {metricName: "decision_retries_exceeded", metricType: Counter},
 		StaleMutableStateCounter:                                     {metricName: "stale_mutable_state", metricType: Counter},
 		DataInconsistentCounter:                                      {metricName: "data_inconsistent", metricType: Counter},
@@ -3611,10 +3635,12 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		NewTimerNotifyCounter:                                        {metricName: "new_timer_notifications", metricType: Counter},
 		AcquireShardsCounter:                                         {metricName: "acquire_shards_count", metricType: Counter},
 		AcquireShardsLatency:                                         {metricName: "acquire_shards_latency", metricType: Timer},
+		AcquireShardsLatencyHistogram:                                {metricName: "acquire_shards_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardClosedCounter:                                           {metricName: "shard_closed_count", metricType: Counter},
 		ShardItemCreatedCounter:                                      {metricName: "sharditem_created_count", metricType: Counter},
 		ShardItemRemovedCounter:                                      {metricName: "sharditem_removed_count", metricType: Counter},
 		ShardItemAcquisitionLatency:                                  {metricName: "sharditem_acquisition_latency", metricType: Timer},
+		ShardItemAcquisitionLatencyHistogram:                         {metricName: "sharditem_acquisition_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoReplicationPendingTasksTimer:                        {metricName: "shardinfo_replication_pending_task", metricType: Timer},
 		ShardInfoTransferActivePendingTasksTimer:                     {metricName: "shardinfo_transfer_active_pending_task", metricType: Timer},
 		ShardInfoTransferStandbyPendingTasksTimer:                    {metricName: "shardinfo_transfer_standby_pending_task", metricType: Timer},
@@ -3637,7 +3663,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		NumShardsGauge:                                               {metricName: "numshards_gauge", metricType: Gauge},
 		GetEngineForShardErrorCounter:                                {metricName: "get_engine_for_shard_errors", metricType: Counter},
 		GetEngineForShardLatency:                                     {metricName: "get_engine_for_shard_latency", metricType: Timer},
+		GetEngineForShardLatencyHistogram:                            {metricName: "get_engine_for_shard_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		RemoveEngineForShardLatency:                                  {metricName: "remove_engine_for_shard_latency", metricType: Timer},
+		RemoveEngineForShardLatencyHistogram:                         {metricName: "remove_engine_for_shard_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		CompleteDecisionWithStickyEnabledCounter:                     {metricName: "complete_decision_sticky_enabled_count", metricType: Counter},
 		CompleteDecisionWithStickyDisabledCounter:                    {metricName: "complete_decision_sticky_disabled_count", metricType: Counter},
 		DecisionHeartbeatTimeoutCounter:                              {metricName: "decision_heartbeat_timeout_count", metricType: Counter},
@@ -3693,10 +3721,15 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		BufferedEventsCount:                                          {metricName: "buffered_events_count", metricType: Timer},
 		BufferedEventsCountHistogram:                                 {metricName: "buffered_events_count_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		DeleteActivityInfoCount:                                      {metricName: "delete_activity_info", metricType: Timer},
+		DeleteActivityInfoCountHistogram:                             {metricName: "delete_activity_info_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		DeleteTimerInfoCount:                                         {metricName: "delete_timer_info", metricType: Timer},
+		DeleteTimerInfoCountHistogram:                                {metricName: "delete_timer_info_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		DeleteChildInfoCount:                                         {metricName: "delete_child_info", metricType: Timer},
+		DeleteChildInfoCountHistogram:                                {metricName: "delete_child_info_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		DeleteSignalInfoCount:                                        {metricName: "delete_signal_info", metricType: Timer},
+		DeleteSignalInfoCountHistogram:                               {metricName: "delete_signal_info_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		DeleteRequestCancelInfoCount:                                 {metricName: "delete_request_cancel_info", metricType: Timer},
+		DeleteRequestCancelInfoCountHistogram:                        {metricName: "delete_request_cancel_info_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		WorkflowRetryBackoffTimerCount:                               {metricName: "workflow_retry_backoff_timer", metricType: Counter},
 		WorkflowCronBackoffTimerCount:                                {metricName: "workflow_cron_backoff_timer", metricType: Counter},
 		WorkflowCleanupDeleteCount:                                   {metricName: "workflow_cleanup_delete", metricType: Counter},
@@ -3809,9 +3842,12 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		FailoverMarkerCallbackCount:                                  {metricName: "failover_marker_callback_count", metricType: Counter},
 		HistoryFailoverCallbackCount:                                 {metricName: "failover_callback_handler_count", metricType: Counter},
 		TransferTasksCount:                                           {metricName: "transfer_tasks_count", metricType: Timer},
+		TransferTasksCountHistogram:                                  {metricName: "transfer_tasks_count_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		TimerTasksCount:                                              {metricName: "timer_tasks_count", metricType: Timer},
+		TimerTasksCountHistogram:                                     {metricName: "timer_tasks_count_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		CrossClusterTasksCount:                                       {metricName: "cross_cluster_tasks_count", metricType: Timer},
 		ReplicationTasksCount:                                        {metricName: "replication_tasks_count", metricType: Timer},
+		ReplicationTasksCountHistogram:                               {metricName: "replication_tasks_count_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		WorkflowVersionCount:                                         {metricName: "workflow_version_count", metricType: Gauge},
 		WorkflowTypeCount:                                            {metricName: "workflow_type_count", metricType: Gauge},
 		WorkflowStartedCount:                                         {metricName: "workflow_started_count", metricType: Counter},
@@ -3822,7 +3858,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		WorkflowIDCacheSizeGauge:                                     {metricName: "workflow_id_cache_size", metricType: Gauge},
 		WorkflowIDCacheRequestsExternalRatelimitedCounter:            {metricName: "workflow_id_external_requests_ratelimited", metricType: Counter},
 		WorkflowIDCacheRequestsExternalMaxRequestsPerSecondsTimer:    {metricName: "workflow_id_external_requests_max_requests_per_seconds", metricType: Timer},
+		WorkflowIDCacheRequestsExternalMaxRequestsPerSecondsHistogram: {metricName: "workflow_id_external_requests_max_requests_per_seconds_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		WorkflowIDCacheRequestsInternalMaxRequestsPerSecondsTimer:    {metricName: "workflow_id_internal_requests_max_requests_per_seconds", metricType: Timer},
+		WorkflowIDCacheRequestsInternalMaxRequestsPerSecondsHistogram: {metricName: "workflow_id_internal_requests_max_requests_per_seconds_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		WorkflowIDCacheRequestsInternalRatelimitedCounter:            {metricName: "workflow_id_internal_requests_ratelimited", metricType: Counter},
 		VirtualQueueCountGauge:                                       {metricName: "virtual_queue_count", metricType: Gauge},
 		VirtualQueuePausedGauge:                                      {metricName: "virtual_queue_paused", metricType: Gauge},

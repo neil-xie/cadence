@@ -156,6 +156,54 @@ var HistogramMigrationMetrics = map[string]struct{}{
 	"elasticsearch_latency_per_domain_ns": {},
 	"elasticsearch_latency":               {},
 	"elasticsearch_latency_ns":            {},
+
+	"event_blob_size":        {},
+	"event_blob_size_counts": {},
+
+	"paralleltask_submit_latency":              {},
+	"paralleltask_submit_latency_ns":           {},
+	"paralleltask_task_processing_latency":     {},
+	"paralleltask_task_processing_latency_ns":  {},
+
+	"decision_attempt":        {},
+	"decision_attempt_counts": {},
+
+	"acquire_shards_latency":    {},
+	"acquire_shards_latency_ns": {},
+
+	"transfer_tasks_count":        {},
+	"transfer_tasks_count_counts": {},
+	"timer_tasks_count":           {},
+	"timer_tasks_count_counts":    {},
+	"replication_tasks_count":     {},
+	"replication_tasks_count_counts": {},
+
+	"delete_activity_info":               {},
+	"delete_activity_info_counts":        {},
+	"delete_timer_info":                  {},
+	"delete_timer_info_counts":           {},
+	"delete_child_info":                  {},
+	"delete_child_info_counts":           {},
+	"delete_signal_info":                 {},
+	"delete_signal_info_counts":          {},
+	"delete_request_cancel_info":         {},
+	"delete_request_cancel_info_counts":  {},
+
+	"workflow_id_external_requests_max_requests_per_seconds":        {},
+	"workflow_id_external_requests_max_requests_per_seconds_counts": {},
+	"workflow_id_internal_requests_max_requests_per_seconds":        {},
+	"workflow_id_internal_requests_max_requests_per_seconds_counts": {},
+
+	"decision_result_count":        {},
+	"decision_result_count_counts": {},
+
+	"sharditem_acquisition_latency":    {},
+	"sharditem_acquisition_latency_ns": {},
+
+	"get_engine_for_shard_latency":    {},
+	"get_engine_for_shard_latency_ns": {},
+	"remove_engine_for_shard_latency":    {},
+	"remove_engine_for_shard_latency_ns": {},
 }
 
 func (h HistogramMigration) EmitTimer(name string) bool {
