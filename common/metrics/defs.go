@@ -2370,7 +2370,9 @@ const (
 	CadenceAuthorizationLatency
 
 	DomainCachePrepareCallbacksLatency
+	DomainCachePrepareCallbacksLatencyHistogram
 	DomainCacheCallbacksLatency
+	DomainCacheCallbacksLatencyHistogram
 	DomainCacheCallbacksCount
 
 	HistorySize
@@ -2446,13 +2448,16 @@ const (
 	HistoryArchiverArchiveSuccessCount
 	HistoryArchiverHistoryMutatedCount
 	HistoryArchiverTotalUploadSize
+	HistoryArchiverTotalUploadSizeHistogram
 	HistoryArchiverHistorySize
+	HistoryArchiverHistorySizeHistogram
 	HistoryArchiverDuplicateArchivalsCount
 
 	// The following metrics are only used by internal history archiver implemention.
 	// TODO: move them to internal repo once cadence plugin model is in place.
 	HistoryArchiverBlobExistsCount
 	HistoryArchiverBlobSize
+	HistoryArchiverBlobSizeHistogram
 	HistoryArchiverRunningDeterministicConstructionCheckCount
 	HistoryArchiverDeterministicConstructionCheckFailedCount
 	HistoryArchiverRunningBlobIntegrityCheckCount
@@ -2720,21 +2725,36 @@ const (
 	ShardItemAcquisitionLatency
 	ShardItemAcquisitionLatencyHistogram
 	ShardInfoReplicationPendingTasksTimer
+	ShardInfoReplicationPendingTasksHistogram
 	ShardInfoTransferActivePendingTasksTimer
+	ShardInfoTransferActivePendingTasksHistogram
 	ShardInfoTransferStandbyPendingTasksTimer
+	ShardInfoTransferStandbyPendingTasksHistogram
 	ShardInfoTimerActivePendingTasksTimer
+	ShardInfoTimerActivePendingTasksHistogram
 	ShardInfoTimerStandbyPendingTasksTimer
+	ShardInfoTimerStandbyPendingTasksHistogram
 	ShardInfoCrossClusterPendingTasksTimer
+	ShardInfoCrossClusterPendingTasksHistogram
 	ShardInfoReplicationLagTimer
+	ShardInfoReplicationLagHistogram
 	ShardInfoTransferLagTimer
+	ShardInfoTransferLagHistogram
 	ShardInfoTimerLagTimer
+	ShardInfoTimerLagHistogram
 	ShardInfoCrossClusterLagTimer
 	ShardInfoTransferDiffTimer
+	ShardInfoTransferDiffHistogram
 	ShardInfoTimerDiffTimer
+	ShardInfoTimerDiffHistogram
 	ShardInfoTransferFailoverInProgressTimer
+	ShardInfoTransferFailoverInProgressHistogram
 	ShardInfoTimerFailoverInProgressTimer
+	ShardInfoTimerFailoverInProgressHistogram
 	ShardInfoTransferFailoverLatencyTimer
+	ShardInfoTransferFailoverLatencyHistogram
 	ShardInfoTimerFailoverLatencyTimer
+	ShardInfoTimerFailoverLatencyHistogram
 	SyncShardFromRemoteCounter
 	SyncShardFromRemoteFailure
 	MembershipChangedCounter
@@ -2748,7 +2768,9 @@ const (
 	CompleteDecisionWithStickyDisabledCounter
 	DecisionHeartbeatTimeoutCounter
 	HistoryEventNotificationQueueingLatency
+	HistoryEventNotificationQueueingLatencyHistogram
 	HistoryEventNotificationFanoutLatency
+	HistoryEventNotificationFanoutLatencyHistogram
 	HistoryEventNotificationInFlightMessageGauge
 	HistoryEventNotificationFailDeliveryCount
 	EmptyReplicationEventsCounter
@@ -2891,11 +2913,15 @@ const (
 	GetDLQReplicationMessagesLatency
 	EventReapplySkippedCount
 	DirectQueryDispatchLatency
+	DirectQueryDispatchLatencyHistogram
 	DirectQueryDispatchStickyLatency
+	DirectQueryDispatchStickyLatencyHistogram
 	DirectQueryDispatchNonStickyLatency
+	DirectQueryDispatchNonStickyLatencyHistogram
 	DirectQueryDispatchStickySuccessCount
 	DirectQueryDispatchNonStickySuccessCount
 	DirectQueryDispatchClearStickinessLatency
+	DirectQueryDispatchClearStickinessLatencyHistogram
 	DirectQueryDispatchClearStickinessSuccessCount
 	DirectQueryDispatchTimeoutBeforeNonStickyCount
 	DecisionTaskQueryLatency
@@ -3271,7 +3297,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		CadenceDcRedirectionClientLatency:                            {metricName: "cadence_client_latency_redirection", metricType: Timer},
 		CadenceAuthorizationLatency:                                  {metricName: "cadence_authorization_latency", metricType: Timer},
 		DomainCachePrepareCallbacksLatency:                           {metricName: "domain_cache_prepare_callbacks_latency", metricType: Timer},
+		DomainCachePrepareCallbacksLatencyHistogram:                   {metricName: "domain_cache_prepare_callbacks_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DomainCacheCallbacksLatency:                                  {metricName: "domain_cache_callbacks_latency", metricType: Timer},
+		DomainCacheCallbacksLatencyHistogram:                          {metricName: "domain_cache_callbacks_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DomainCacheCallbacksCount:                                    {metricName: "domain_cache_callbacks_count", metricType: Counter},
 		HistorySize:                                                  {metricName: "history_size", metricType: Timer},
 		HistorySizeHistogram:                                         {metricName: "history_size_counts", metricType: Histogram, intExponentialBuckets: Mid8B16MB},
@@ -3333,10 +3361,13 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		HistoryArchiverArchiveSuccessCount:                        {metricName: "history_archiver_archive_success", metricType: Counter},
 		HistoryArchiverHistoryMutatedCount:                        {metricName: "history_archiver_history_mutated", metricType: Counter},
 		HistoryArchiverTotalUploadSize:                            {metricName: "history_archiver_total_upload_size", metricType: Timer},
+		HistoryArchiverTotalUploadSizeHistogram:                    {metricName: "history_archiver_total_upload_size_counts", metricType: Histogram, intExponentialBuckets: Mid8B16MB},
 		HistoryArchiverHistorySize:                                {metricName: "history_archiver_history_size", metricType: Timer},
+		HistoryArchiverHistorySizeHistogram:                        {metricName: "history_archiver_history_size_counts", metricType: Histogram, intExponentialBuckets: Mid8B16MB},
 		HistoryArchiverDuplicateArchivalsCount:                    {metricName: "history_archiver_duplicate_archivals", metricType: Counter},
 		HistoryArchiverBlobExistsCount:                            {metricName: "history_archiver_blob_exists", metricType: Counter},
 		HistoryArchiverBlobSize:                                   {metricName: "history_archiver_blob_size", metricType: Timer},
+		HistoryArchiverBlobSizeHistogram:                           {metricName: "history_archiver_blob_size_counts", metricType: Histogram, intExponentialBuckets: Mid8B16MB},
 		HistoryArchiverRunningDeterministicConstructionCheckCount: {metricName: "history_archiver_running_deterministic_construction_check", metricType: Counter},
 		HistoryArchiverDeterministicConstructionCheckFailedCount:  {metricName: "history_archiver_deterministic_construction_check_failed", metricType: Counter},
 		HistoryArchiverRunningBlobIntegrityCheckCount:             {metricName: "history_archiver_running_blob_integrity_check", metricType: Counter},
@@ -3641,21 +3672,36 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		ShardItemAcquisitionLatency:                                   {metricName: "sharditem_acquisition_latency", metricType: Timer},
 		ShardItemAcquisitionLatencyHistogram:                          {metricName: "sharditem_acquisition_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoReplicationPendingTasksTimer:                         {metricName: "shardinfo_replication_pending_task", metricType: Timer},
+		ShardInfoReplicationPendingTasksHistogram:                     {metricName: "shardinfo_replication_pending_task_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTransferActivePendingTasksTimer:                      {metricName: "shardinfo_transfer_active_pending_task", metricType: Timer},
+		ShardInfoTransferActivePendingTasksHistogram:                  {metricName: "shardinfo_transfer_active_pending_task_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTransferStandbyPendingTasksTimer:                     {metricName: "shardinfo_transfer_standby_pending_task", metricType: Timer},
+		ShardInfoTransferStandbyPendingTasksHistogram:                 {metricName: "shardinfo_transfer_standby_pending_task_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTimerActivePendingTasksTimer:                         {metricName: "shardinfo_timer_active_pending_task", metricType: Timer},
+		ShardInfoTimerActivePendingTasksHistogram:                     {metricName: "shardinfo_timer_active_pending_task_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTimerStandbyPendingTasksTimer:                        {metricName: "shardinfo_timer_standby_pending_task", metricType: Timer},
+		ShardInfoTimerStandbyPendingTasksHistogram:                    {metricName: "shardinfo_timer_standby_pending_task_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoCrossClusterPendingTasksTimer:                        {metricName: "shardinfo_cross_cluster_pending_task", metricType: Timer},
+		ShardInfoCrossClusterPendingTasksHistogram:                    {metricName: "shardinfo_cross_cluster_pending_task_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoReplicationLagTimer:                                  {metricName: "shardinfo_replication_lag", metricType: Timer},
+		ShardInfoReplicationLagHistogram:                              {metricName: "shardinfo_replication_lag_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoTransferLagTimer:                                     {metricName: "shardinfo_transfer_lag", metricType: Timer},
+		ShardInfoTransferLagHistogram:                                 {metricName: "shardinfo_transfer_lag_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoTimerLagTimer:                                        {metricName: "shardinfo_timer_lag", metricType: Timer},
+		ShardInfoTimerLagHistogram:                                    {metricName: "shardinfo_timer_lag_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoCrossClusterLagTimer:                                 {metricName: "shardinfo_cross_cluster_lag", metricType: Timer},
 		ShardInfoTransferDiffTimer:                                    {metricName: "shardinfo_transfer_diff", metricType: Timer},
+		ShardInfoTransferDiffHistogram:                                {metricName: "shardinfo_transfer_diff_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoTimerDiffTimer:                                       {metricName: "shardinfo_timer_diff", metricType: Timer},
+		ShardInfoTimerDiffHistogram:                                   {metricName: "shardinfo_timer_diff_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoTransferFailoverInProgressTimer:                      {metricName: "shardinfo_transfer_failover_in_progress", metricType: Timer},
+		ShardInfoTransferFailoverInProgressHistogram:                  {metricName: "shardinfo_transfer_failover_in_progress_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTimerFailoverInProgressTimer:                         {metricName: "shardinfo_timer_failover_in_progress", metricType: Timer},
+		ShardInfoTimerFailoverInProgressHistogram:                     {metricName: "shardinfo_timer_failover_in_progress_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTransferFailoverLatencyTimer:                         {metricName: "shardinfo_transfer_failover_latency", metricType: Timer},
+		ShardInfoTransferFailoverLatencyHistogram:                     {metricName: "shardinfo_transfer_failover_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		ShardInfoTimerFailoverLatencyTimer:                            {metricName: "shardinfo_timer_failover_latency", metricType: Timer},
+		ShardInfoTimerFailoverLatencyHistogram:                        {metricName: "shardinfo_timer_failover_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		SyncShardFromRemoteCounter:                                    {metricName: "syncshard_remote_count", metricType: Counter},
 		SyncShardFromRemoteFailure:                                    {metricName: "syncshard_remote_failed", metricType: Counter},
 		MembershipChangedCounter:                                      {metricName: "membership_changed_count", metricType: Counter},
@@ -3669,7 +3715,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		CompleteDecisionWithStickyDisabledCounter:                     {metricName: "complete_decision_sticky_disabled_count", metricType: Counter},
 		DecisionHeartbeatTimeoutCounter:                               {metricName: "decision_heartbeat_timeout_count", metricType: Counter},
 		HistoryEventNotificationQueueingLatency:                       {metricName: "history_event_notification_queueing_latency", metricType: Timer},
+		HistoryEventNotificationQueueingLatencyHistogram:              {metricName: "history_event_notification_queueing_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		HistoryEventNotificationFanoutLatency:                         {metricName: "history_event_notification_fanout_latency", metricType: Timer},
+		HistoryEventNotificationFanoutLatencyHistogram:                {metricName: "history_event_notification_fanout_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		HistoryEventNotificationInFlightMessageGauge:                  {metricName: "history_event_notification_inflight_message_gauge", metricType: Gauge},
 		HistoryEventNotificationFailDeliveryCount:                     {metricName: "history_event_notification_fail_delivery_count", metricType: Counter},
 		EmptyReplicationEventsCounter:                                 {metricName: "empty_replication_events", metricType: Counter},
@@ -3802,11 +3850,15 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		GetDLQReplicationMessagesLatency:                              {metricName: "get_dlq_replication_messages", metricType: Timer},
 		EventReapplySkippedCount:                                      {metricName: "event_reapply_skipped_count", metricType: Counter},
 		DirectQueryDispatchLatency:                                    {metricName: "direct_query_dispatch_latency", metricType: Timer},
+		DirectQueryDispatchLatencyHistogram:                           {metricName: "direct_query_dispatch_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DirectQueryDispatchStickyLatency:                              {metricName: "direct_query_dispatch_sticky_latency", metricType: Timer},
+		DirectQueryDispatchStickyLatencyHistogram:                     {metricName: "direct_query_dispatch_sticky_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DirectQueryDispatchNonStickyLatency:                           {metricName: "direct_query_dispatch_non_sticky_latency", metricType: Timer},
+		DirectQueryDispatchNonStickyLatencyHistogram:                  {metricName: "direct_query_dispatch_non_sticky_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DirectQueryDispatchStickySuccessCount:                         {metricName: "direct_query_dispatch_sticky_success", metricType: Counter},
 		DirectQueryDispatchNonStickySuccessCount:                      {metricName: "direct_query_dispatch_non_sticky_success", metricType: Counter},
 		DirectQueryDispatchClearStickinessLatency:                     {metricName: "direct_query_dispatch_clear_stickiness_latency", metricType: Timer},
+		DirectQueryDispatchClearStickinessLatencyHistogram:            {metricName: "direct_query_dispatch_clear_stickiness_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DirectQueryDispatchClearStickinessSuccessCount:                {metricName: "direct_query_dispatch_clear_stickiness_success", metricType: Counter},
 		DirectQueryDispatchTimeoutBeforeNonStickyCount:                {metricName: "direct_query_dispatch_timeout_before_non_sticky", metricType: Counter},
 		DecisionTaskQueryLatency:                                      {metricName: "decision_task_query_latency", metricType: Timer},

@@ -204,6 +204,67 @@ var HistogramMigrationMetrics = map[string]struct{}{
 	"get_engine_for_shard_latency_ns":    {},
 	"remove_engine_for_shard_latency":    {},
 	"remove_engine_for_shard_latency_ns": {},
+
+	"domain_cache_prepare_callbacks_latency":    {},
+	"domain_cache_prepare_callbacks_latency_ns": {},
+	"domain_cache_callbacks_latency":            {},
+	"domain_cache_callbacks_latency_ns":         {},
+
+	"history_archiver_total_upload_size":        {},
+	"history_archiver_total_upload_size_counts": {},
+	"history_archiver_history_size":             {},
+	"history_archiver_history_size_counts":      {},
+	"history_archiver_blob_size":                {},
+	"history_archiver_blob_size_counts":         {},
+
+	"shardinfo_replication_pending_task":            {},
+	"shardinfo_replication_pending_task_counts":     {},
+	"shardinfo_transfer_active_pending_task":        {},
+	"shardinfo_transfer_active_pending_task_counts": {},
+	"shardinfo_transfer_standby_pending_task":        {},
+	"shardinfo_transfer_standby_pending_task_counts": {},
+	"shardinfo_timer_active_pending_task":            {},
+	"shardinfo_timer_active_pending_task_counts":     {},
+	"shardinfo_timer_standby_pending_task":            {},
+	"shardinfo_timer_standby_pending_task_counts":     {},
+	"shardinfo_cross_cluster_pending_task":            {},
+	"shardinfo_cross_cluster_pending_task_counts":     {},
+
+	"shardinfo_replication_lag":    {},
+	"shardinfo_replication_lag_ns": {},
+	"shardinfo_transfer_lag":       {},
+	"shardinfo_transfer_lag_ns":    {},
+	"shardinfo_timer_lag":          {},
+	"shardinfo_timer_lag_ns":       {},
+
+	"shardinfo_transfer_diff":    {},
+	"shardinfo_transfer_diff_ns": {},
+	"shardinfo_timer_diff":       {},
+	"shardinfo_timer_diff_ns":    {},
+
+	"shardinfo_transfer_failover_in_progress":        {},
+	"shardinfo_transfer_failover_in_progress_counts": {},
+	"shardinfo_timer_failover_in_progress":           {},
+	"shardinfo_timer_failover_in_progress_counts":    {},
+
+	"shardinfo_transfer_failover_latency":    {},
+	"shardinfo_transfer_failover_latency_ns": {},
+	"shardinfo_timer_failover_latency":       {},
+	"shardinfo_timer_failover_latency_ns":    {},
+
+	"history_event_notification_queueing_latency":    {},
+	"history_event_notification_queueing_latency_ns": {},
+	"history_event_notification_fanout_latency":      {},
+	"history_event_notification_fanout_latency_ns":   {},
+
+	"direct_query_dispatch_latency":                     {},
+	"direct_query_dispatch_latency_ns":                  {},
+	"direct_query_dispatch_sticky_latency":              {},
+	"direct_query_dispatch_sticky_latency_ns":           {},
+	"direct_query_dispatch_non_sticky_latency":          {},
+	"direct_query_dispatch_non_sticky_latency_ns":       {},
+	"direct_query_dispatch_clear_stickiness_latency":    {},
+	"direct_query_dispatch_clear_stickiness_latency_ns": {},
 }
 
 func (h HistogramMigration) EmitTimer(name string) bool {

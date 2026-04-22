@@ -575,8 +575,10 @@ func (s *contextImpl) DeleteFailoverLevel(category persistence.HistoryTaskCatego
 			switch category {
 			case persistence.HistoryTaskCategoryTransfer:
 				s.GetMetricsClient().RecordTimer(metrics.ShardInfoScope, metrics.ShardInfoTransferFailoverLatencyTimer, time.Since(level.StartTime))
+				s.GetMetricsClient().Scope(metrics.ShardInfoScope).RecordHistogramDuration(metrics.ShardInfoTransferFailoverLatencyHistogram, time.Since(level.StartTime))
 			case persistence.HistoryTaskCategoryTimer:
 				s.GetMetricsClient().RecordTimer(metrics.ShardInfoScope, metrics.ShardInfoTimerFailoverLatencyTimer, time.Since(level.StartTime))
+				s.GetMetricsClient().Scope(metrics.ShardInfoScope).RecordHistogramDuration(metrics.ShardInfoTimerFailoverLatencyHistogram, time.Since(level.StartTime))
 			}
 			return nil
 		}
@@ -1237,14 +1239,25 @@ func (s *contextImpl) emitShardInfoMetricsLogsLocked() {
 
 	metricsScope := s.GetMetricsClient().Scope(metrics.ShardInfoScope)
 	metricsScope.RecordTimer(metrics.ShardInfoTransferDiffTimer, time.Duration(diffTransferLevel))
+	metricsScope.RecordHistogramDuration(metrics.ShardInfoTransferDiffHistogram, time.Duration(diffTransferLevel))
+
 	metricsScope.RecordTimer(metrics.ShardInfoTimerDiffTimer, diffTimerLevel)
+	metricsScope.RecordHistogramDuration(metrics.ShardInfoTimerDiffHistogram, diffTimerLevel)
 
 	metricsScope.RecordTimer(metrics.ShardInfoReplicationLagTimer, time.Duration(replicationLag))
+	metricsScope.RecordHistogramDuration(metrics.ShardInfoReplicationLagHistogram, time.Duration(replicationLag))
+
 	metricsScope.RecordTimer(metrics.ShardInfoTransferLagTimer, time.Duration(transferLag))
+	metricsScope.RecordHistogramDuration(metrics.ShardInfoTransferLagHistogram, time.Duration(transferLag))
+
 	metricsScope.RecordTimer(metrics.ShardInfoTimerLagTimer, timerLag)
+	metricsScope.RecordHistogramDuration(metrics.ShardInfoTimerLagHistogram, timerLag)
 
 	metricsScope.RecordTimer(metrics.ShardInfoTransferFailoverInProgressTimer, time.Duration(transferFailoverInProgress))
+	metricsScope.IntExponentialHistogram(metrics.ShardInfoTransferFailoverInProgressHistogram, transferFailoverInProgress)
+
 	metricsScope.RecordTimer(metrics.ShardInfoTimerFailoverInProgressTimer, time.Duration(timerFailoverInProgress))
+	metricsScope.IntExponentialHistogram(metrics.ShardInfoTimerFailoverInProgressHistogram, timerFailoverInProgress)
 }
 
 func (s *contextImpl) allocateTaskIDsLocked(
