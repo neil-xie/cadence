@@ -193,7 +193,9 @@ func (h *historyArchiver) Archive(ctx context.Context, URI archiver.URI, request
 	}
 
 	scope.AddCounter(metrics.HistoryArchiverTotalUploadSize, totalUploadSize)
+	scope.IntExponentialHistogram(metrics.HistoryArchiverTotalUploadSizeHistogram, int(totalUploadSize))
 	scope.AddCounter(metrics.HistoryArchiverHistorySize, totalUploadSize)
+	scope.IntExponentialHistogram(metrics.HistoryArchiverHistorySizeHistogram, int(totalUploadSize))
 	scope.IncCounter(metrics.HistoryArchiverArchiveSuccessCount)
 	return
 }

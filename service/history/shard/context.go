@@ -1239,16 +1239,16 @@ func (s *contextImpl) emitShardInfoMetricsLogsLocked() {
 
 	metricsScope := s.GetMetricsClient().Scope(metrics.ShardInfoScope)
 	metricsScope.RecordTimer(metrics.ShardInfoTransferDiffTimer, time.Duration(diffTransferLevel))
-	metricsScope.RecordHistogramDuration(metrics.ShardInfoTransferDiffHistogram, time.Duration(diffTransferLevel))
+	metricsScope.IntExponentialHistogram(metrics.ShardInfoTransferDiffHistogram, int(diffTransferLevel))
 
 	metricsScope.RecordTimer(metrics.ShardInfoTimerDiffTimer, diffTimerLevel)
 	metricsScope.RecordHistogramDuration(metrics.ShardInfoTimerDiffHistogram, diffTimerLevel)
 
 	metricsScope.RecordTimer(metrics.ShardInfoReplicationLagTimer, time.Duration(replicationLag))
-	metricsScope.RecordHistogramDuration(metrics.ShardInfoReplicationLagHistogram, time.Duration(replicationLag))
+	metricsScope.IntExponentialHistogram(metrics.ShardInfoReplicationLagHistogram, int(replicationLag))
 
 	metricsScope.RecordTimer(metrics.ShardInfoTransferLagTimer, time.Duration(transferLag))
-	metricsScope.RecordHistogramDuration(metrics.ShardInfoTransferLagHistogram, time.Duration(transferLag))
+	metricsScope.IntExponentialHistogram(metrics.ShardInfoTransferLagHistogram, int(transferLag))
 
 	metricsScope.RecordTimer(metrics.ShardInfoTimerLagTimer, timerLag)
 	metricsScope.RecordHistogramDuration(metrics.ShardInfoTimerLagHistogram, timerLag)
