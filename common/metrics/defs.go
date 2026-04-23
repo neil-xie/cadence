@@ -2742,7 +2742,6 @@ const (
 	ShardInfoTransferLagHistogram
 	ShardInfoTimerLagTimer
 	ShardInfoTimerLagHistogram
-	ShardInfoCrossClusterLagTimer
 	ShardInfoTransferDiffTimer
 	ShardInfoTransferDiffHistogram
 	ShardInfoTimerDiffTimer
@@ -3689,7 +3688,6 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		ShardInfoTransferLagHistogram:                                 {metricName: "shardinfo_transfer_lag_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTimerLagTimer:                                        {metricName: "shardinfo_timer_lag", metricType: Timer},
 		ShardInfoTimerLagHistogram:                                    {metricName: "shardinfo_timer_lag_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
-		ShardInfoCrossClusterLagTimer:                                 {metricName: "shardinfo_cross_cluster_lag", metricType: Timer},
 		ShardInfoTransferDiffTimer:                                    {metricName: "shardinfo_transfer_diff", metricType: Timer},
 		ShardInfoTransferDiffHistogram:                                {metricName: "shardinfo_transfer_diff_counts", metricType: Histogram, intExponentialBuckets: Mid1To16k},
 		ShardInfoTimerDiffTimer:                                       {metricName: "shardinfo_timer_diff", metricType: Timer},
