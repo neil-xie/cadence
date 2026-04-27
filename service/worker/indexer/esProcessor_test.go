@@ -196,7 +196,7 @@ func (s *esProcessorSuite) TestBulkAfterActionX() {
 	}
 
 	mockKafkaMsg := &msgMocks.Message{}
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 	mockKafkaMsg.On("Ack").Return(nil).Once()
 	s.esProcessor.bulkAfterAction(0, requests, response, nil)
@@ -232,7 +232,7 @@ func (s *esProcessorSuite) TestBulkAfterAction_Nack() {
 	payload := s.getEncodedMsg(wid, rid, domainID)
 
 	mockKafkaMsg := &msgMocks.Message{}
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 	mockKafkaMsg.On("Nack").Return(nil).Once()
 	mockKafkaMsg.On("Value").Return(payload).Once()
@@ -270,7 +270,7 @@ func (s *esProcessorSuite) TestBulkAfterAction_Error() {
 	payload := s.getEncodedMsg(wid, rid, domainID)
 
 	mockKafkaMsg := &msgMocks.Message{}
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 	mockKafkaMsg.On("Nack").Return(nil).Once()
 	mockKafkaMsg.On("Value").Return(payload).Once()
@@ -307,7 +307,7 @@ func (s *esProcessorSuite) TestBulkAfterAction_Error_Nack() {
 	payload := s.getEncodedMsg(wid, rid, domainID)
 
 	mockKafkaMsg := &msgMocks.Message{}
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 	mockKafkaMsg.On("Nack").Return(nil).Once()
 	mockKafkaMsg.On("Ack").Return(nil).Once() // Expect Ack to be called
@@ -377,7 +377,7 @@ func (s *esProcessorSuite) TestGetMsgWithInfo() {
 
 	mockKafkaMsg := &msgMocks.Message{}
 	mockKafkaMsg.On("Value").Return(payload).Once()
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 	wid, rid, domainID := s.esProcessor.getMsgWithInfo(testKey)
 	s.Equal(testWid, wid)
@@ -389,7 +389,7 @@ func (s *esProcessorSuite) TestGetMsgInfo_Error() {
 	testKey := "test-key"
 	mockKafkaMsg := &msgMocks.Message{}
 	mockKafkaMsg.On("Value").Return([]byte{}).Once()
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 	wid, rid, domainID := s.esProcessor.getMsgWithInfo(testKey)
 	s.Equal("", wid)
@@ -523,7 +523,7 @@ func (s *esProcessorSuite) TestBulkAfterAction_Nack_Shadow_WithError() {
 	payload := s.getEncodedMsg(wid, rid, domainID)
 
 	mockKafkaMsg := &msgMocks.Message{}
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 
 	// Mock Kafka message Nack and Value
@@ -563,7 +563,7 @@ func (s *esProcessorSuite) TestBulkAfterAction_Shadow_Fail_WithoutError() {
 	payload := s.getEncodedMsg(wid, rid, domainID)
 
 	mockKafkaMsg := &msgMocks.Message{}
-	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch)
+	mapVal := newKafkaMessageWithMetrics(mockKafkaMsg, &testStopWatch, time.Now(), s.esProcessor.scope)
 	s.esProcessor.mapToKafkaMsg.Put(testKey, mapVal)
 
 	// Mock Kafka message Nack and Value
