@@ -278,8 +278,8 @@ func (h *handlerImpl) RecordActivityTaskHeartbeat(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRecordActivityTaskHeartbeatScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRecordActivityTaskHeartbeatScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -325,8 +325,8 @@ func (h *handlerImpl) RecordActivityTaskStarted(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRecordActivityTaskStartedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRecordActivityTaskStartedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := recordRequest.GetDomainUUID()
 	workflowExecution := recordRequest.WorkflowExecution
@@ -371,8 +371,8 @@ func (h *handlerImpl) RecordDecisionTaskStarted(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRecordDecisionTaskStartedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRecordDecisionTaskStartedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := recordRequest.GetDomainUUID()
 	workflowExecution := recordRequest.WorkflowExecution
@@ -430,8 +430,8 @@ func (h *handlerImpl) RespondActivityTaskCompleted(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRespondActivityTaskCompletedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRespondActivityTaskCompletedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -478,8 +478,8 @@ func (h *handlerImpl) RespondActivityTaskFailed(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRespondActivityTaskFailedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRespondActivityTaskFailedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -526,8 +526,8 @@ func (h *handlerImpl) RespondActivityTaskCanceled(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRespondActivityTaskCanceledScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRespondActivityTaskCanceledScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -574,8 +574,8 @@ func (h *handlerImpl) RespondDecisionTaskCompleted(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRespondDecisionTaskCompletedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRespondDecisionTaskCompletedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -631,8 +631,8 @@ func (h *handlerImpl) RespondDecisionTaskFailed(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRespondDecisionTaskFailedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRespondDecisionTaskFailedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -698,8 +698,8 @@ func (h *handlerImpl) StartWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryStartWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryStartWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := wrappedRequest.GetDomainUUID()
 	if domainID == "" {
@@ -812,8 +812,8 @@ func (h *handlerImpl) ResetQueue(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryResetQueueScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryResetQueueScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	engine, err := h.controller.GetEngineForShard(int(request.GetShardID()))
 	if err != nil {
@@ -844,8 +844,8 @@ func (h *handlerImpl) DescribeQueue(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryDescribeQueueScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryDescribeQueueScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	engine, err := h.controller.GetEngineForShard(int(request.GetShardID()))
 	if err != nil {
@@ -876,8 +876,8 @@ func (h *handlerImpl) DescribeMutableState(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryDescribeMutabelStateScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryDescribeMutabelStateScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := request.GetDomainUUID()
 	if domainID == "" {
@@ -908,8 +908,8 @@ func (h *handlerImpl) GetMutableState(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryGetMutableStateScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryGetMutableStateScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := getRequest.GetDomainUUID()
 	if domainID == "" {
@@ -944,8 +944,8 @@ func (h *handlerImpl) PollMutableState(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryPollMutableStateScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryPollMutableStateScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := getRequest.GetDomainUUID()
 	if domainID == "" {
@@ -980,8 +980,8 @@ func (h *handlerImpl) DescribeWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryDescribeWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryDescribeWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := request.GetDomainUUID()
 	if domainID == "" {
@@ -1016,8 +1016,8 @@ func (h *handlerImpl) RequestCancelWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRequestCancelWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRequestCancelWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1064,8 +1064,8 @@ func (h *handlerImpl) SignalWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistorySignalWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistorySignalWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1109,8 +1109,8 @@ func (h *handlerImpl) SignalWithStartWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistorySignalWithStartWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistorySignalWithStartWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1166,8 +1166,8 @@ func (h *handlerImpl) RemoveSignalMutableState(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRemoveSignalMutableStateScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRemoveSignalMutableStateScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1208,8 +1208,8 @@ func (h *handlerImpl) TerminateWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryTerminateWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryTerminateWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1250,8 +1250,8 @@ func (h *handlerImpl) ResetWorkflowExecution(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryResetWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryResetWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1290,8 +1290,8 @@ func (h *handlerImpl) QueryWorkflow(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryQueryWorkflowScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryQueryWorkflowScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1333,8 +1333,8 @@ func (h *handlerImpl) ScheduleDecisionTask(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryScheduleDecisionTaskScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryScheduleDecisionTaskScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1379,8 +1379,8 @@ func (h *handlerImpl) RecordChildExecutionCompleted(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRecordChildExecutionCompletedScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRecordChildExecutionCompletedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1430,8 +1430,8 @@ func (h *handlerImpl) ResetStickyTaskList(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryResetStickyTaskListScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryResetStickyTaskListScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1474,8 +1474,8 @@ func (h *handlerImpl) ReplicateEventsV2(
 		return constants.ErrShuttingDown
 	}
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryReplicateEventsV2Scope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryReplicateEventsV2Scope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domainID := replicateRequest.GetDomainUUID()
 	if domainID == "" {
@@ -1511,8 +1511,8 @@ func (h *handlerImpl) SyncShardStatus(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistorySyncShardStatusScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistorySyncShardStatusScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1553,8 +1553,8 @@ func (h *handlerImpl) SyncActivity(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistorySyncActivityScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistorySyncActivityScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1602,8 +1602,8 @@ func (h *handlerImpl) GetReplicationMessages(
 
 	h.GetLogger().Debug("Received GetReplicationMessages call.")
 
-	metricsScope, sw := h.startRequestProfile(ctx, metrics.HistoryGetReplicationMessagesScope)
-	defer sw.Stop()
+	metricsScope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryGetReplicationMessagesScope)
+	defer func() { sw.Stop(); metricsScope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1764,7 +1764,7 @@ func (h *handlerImpl) GetDLQReplicationMessages(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	_, sw := h.startRequestProfile(ctx, metrics.HistoryGetDLQReplicationMessagesScope)
+	_, sw, _ := h.startRequestProfile(ctx, metrics.HistoryGetDLQReplicationMessagesScope)
 	defer sw.Stop()
 
 	if h.isShuttingDown() {
@@ -1840,8 +1840,8 @@ func (h *handlerImpl) ReapplyEvents(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryReapplyEventsScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryReapplyEventsScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1883,8 +1883,8 @@ func (h *handlerImpl) CountDLQMessages(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryCountDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryCountDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1931,8 +1931,8 @@ func (h *handlerImpl) ReadDLQMessages(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryReadDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryReadDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -1955,8 +1955,8 @@ func (h *handlerImpl) PurgeDLQMessages(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryPurgeDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryPurgeDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -1983,8 +1983,8 @@ func (h *handlerImpl) MergeDLQMessages(
 		return nil, constants.ErrShuttingDown
 	}
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryMergeDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryMergeDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	engine, err := h.controller.GetEngineForShard(int(request.GetShardID()))
 	if err != nil {
@@ -1999,8 +1999,8 @@ func (h *handlerImpl) RefreshWorkflowTasks(
 	ctx context.Context,
 	request *types.HistoryRefreshWorkflowTasksRequest) (retError error) {
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRefreshWorkflowTasksScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRefreshWorkflowTasksScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return constants.ErrShuttingDown
@@ -2038,7 +2038,7 @@ func (h *handlerImpl) NotifyFailoverMarkers(
 	request *types.NotifyFailoverMarkersRequest,
 ) (retError error) {
 
-	_, sw := h.startRequestProfile(ctx, metrics.HistoryNotifyFailoverMarkersScope)
+	_, sw, _ := h.startRequestProfile(ctx, metrics.HistoryNotifyFailoverMarkersScope)
 	defer sw.Stop()
 
 	for _, token := range request.GetFailoverMarkerTokens() {
@@ -2070,8 +2070,8 @@ func (h *handlerImpl) GetFailoverInfo(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryGetFailoverInfoScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryGetFailoverInfoScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -2091,8 +2091,8 @@ func (h *handlerImpl) RatelimitUpdate(
 	defer func() { log.CapturePanic(recover(), h.GetLogger(), &retError) }()
 	h.startWG.Wait()
 
-	scope, sw := h.startRequestProfile(ctx, metrics.HistoryRatelimitUpdateScope)
-	defer sw.Stop()
+	scope, sw, swStart := h.startRequestProfile(ctx, metrics.HistoryRatelimitUpdateScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if h.isShuttingDown() {
 		return nil, constants.ErrShuttingDown
@@ -2270,11 +2270,12 @@ func (h *handlerImpl) emitInfoOrDebugLog(
 	}
 }
 
-func (h *handlerImpl) startRequestProfile(ctx context.Context, scope metrics.ScopeIdx) (metrics.Scope, metrics.Stopwatch) {
+func (h *handlerImpl) startRequestProfile(ctx context.Context, scope metrics.ScopeIdx) (metrics.Scope, metrics.Stopwatch, time.Time) {
 	metricsScope := h.GetMetricsClient().Scope(scope, metrics.GetContextTags(ctx)...)
 	metricsScope.IncCounter(metrics.CadenceRequests)
+	swStart := time.Now()
 	sw := metricsScope.StartTimer(metrics.CadenceLatency)
-	return metricsScope, sw
+	return metricsScope, sw, swStart
 }
 
 func validateTaskToken(token *common.TaskToken) error {

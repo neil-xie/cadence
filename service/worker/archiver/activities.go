@@ -23,6 +23,7 @@ package archiver
 import (
 	"context"
 	"errors"
+	"time"
 
 	"go.uber.org/cadence"
 	"go.uber.org/cadence/activity"
@@ -53,9 +54,11 @@ var (
 func uploadHistoryActivity(ctx context.Context, request ArchiveRequest) (err error) {
 	container := ctx.Value(bootstrapContainerKey).(*BootstrapContainer)
 	scope := container.MetricsClient.Scope(metrics.ArchiverUploadHistoryActivityScope, metrics.DomainTag(request.DomainName))
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 			if err.Error() == errUploadNonRetriable.Error() {
 				scope.IncCounter(metrics.ArchiverNonRetryableErrorCount)
@@ -106,9 +109,11 @@ func uploadHistoryActivity(ctx context.Context, request ArchiveRequest) (err err
 func deleteHistoryActivity(ctx context.Context, request ArchiveRequest) (err error) {
 	container := ctx.Value(bootstrapContainerKey).(*BootstrapContainer)
 	scope := container.MetricsClient.Scope(metrics.ArchiverDeleteHistoryActivityScope, metrics.DomainTag(request.DomainName))
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 			if err.Error() == errDeleteNonRetriable.Error() {
 				scope.IncCounter(metrics.ArchiverNonRetryableErrorCount)
@@ -135,9 +140,11 @@ func deleteHistoryActivity(ctx context.Context, request ArchiveRequest) (err err
 func archiveVisibilityActivity(ctx context.Context, request ArchiveRequest) (err error) {
 	container := ctx.Value(bootstrapContainerKey).(*BootstrapContainer)
 	scope := container.MetricsClient.Scope(metrics.ArchiverArchiveVisibilityActivityScope, metrics.DomainTag(request.DomainName))
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 			if err.Error() == errArchiveVisibilityNonRetriable.Error() {
 				scope.IncCounter(metrics.ArchiverNonRetryableErrorCount)

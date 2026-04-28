@@ -22,6 +22,7 @@ package messaging
 
 import (
 	"context"
+	"time"
 
 	"github.com/uber/cadence/common/metrics"
 )
@@ -61,9 +62,11 @@ func NewMetricProducer(
 func (p *MetricsProducer) Publish(ctx context.Context, msg interface{}) error {
 	p.scope.IncCounter(metrics.CadenceClientRequests)
 
+	clientLatencyStart := time.Now()
 	sw := p.scope.StartTimer(metrics.CadenceClientLatency)
 	err := p.producer.Publish(ctx, msg)
 	sw.Stop()
+	p.scope.RecordHistogramDuration(metrics.CadenceClientLatencyHistogram, time.Since(clientLatencyStart))
 
 	if err != nil {
 		p.scope.IncCounter(metrics.CadenceClientFailures)

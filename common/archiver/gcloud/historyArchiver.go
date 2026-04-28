@@ -26,6 +26,7 @@ import (
 	"errors"
 	"math"
 	"path/filepath"
+	"time"
 
 	"github.com/uber/cadence/common"
 	"github.com/uber/cadence/common/archiver"
@@ -106,9 +107,11 @@ func newHistoryArchiver(
 func (h *historyArchiver) Archive(ctx context.Context, URI archiver.URI, request *archiver.ArchiveHistoryRequest, opts ...archiver.ArchiveOption) (err error) {
 	scope := h.container.MetricsClient.Scope(metrics.HistoryArchiverScope, metrics.DomainTag(request.DomainName))
 	featureCatalog := archiver.GetFeatureCatalog(opts...)
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 
 			if err.Error() != errUploadNonRetriable.Error() {

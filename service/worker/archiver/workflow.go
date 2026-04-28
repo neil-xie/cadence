@@ -51,6 +51,7 @@ func archivalWorkflowHelper(
 ) error {
 	metricsClient = NewReplayMetricsClient(metricsClient, ctx)
 	metricsClient.IncCounter(metrics.ArchiverArchivalWorkflowScope, metrics.ArchiverWorkflowStartedCount)
+	wfLatencyStart := workflow.Now(ctx)
 	sw := metricsClient.StartTimer(metrics.ArchiverArchivalWorkflowScope, metrics.CadenceLatency)
 	workflowInfo := workflow.GetInfo(ctx)
 	logger = logger.WithTags(
@@ -99,6 +100,7 @@ func archivalWorkflowHelper(
 		logger.Info("workflow stopping because pump did not get any signals within timeout threshold")
 		metricsClient.IncCounter(metrics.ArchiverArchivalWorkflowScope, metrics.ArchiverWorkflowStoppingCount)
 		sw.Stop()
+		metricsClient.Scope(metrics.ArchiverArchivalWorkflowScope).RecordHistogramDuration(metrics.CadenceLatencyHistogram, workflow.Now(ctx).Sub(wfLatencyStart))
 		return nil
 	}
 	for {
@@ -112,5 +114,6 @@ func archivalWorkflowHelper(
 	ctx = workflow.WithExecutionStartToCloseTimeout(ctx, workflowStartToCloseTimeout)
 	ctx = workflow.WithWorkflowTaskStartToCloseTimeout(ctx, workflowTaskStartToCloseTimeout)
 	sw.Stop()
+	metricsClient.Scope(metrics.ArchiverArchivalWorkflowScope).RecordHistogramDuration(metrics.CadenceLatencyHistogram, workflow.Now(ctx).Sub(wfLatencyStart))
 	return workflow.NewContinueAsNewError(ctx, archivalWorkflowFnName, pumpResult.UnhandledCarryover)
 }

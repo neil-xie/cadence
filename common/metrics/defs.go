@@ -2282,6 +2282,7 @@ const (
 	CadenceRequests MetricIdx = iota
 	CadenceFailures
 	CadenceLatency
+	CadenceLatencyHistogram
 	CadenceErrBadRequestCounter
 	CadenceErrDomainNotActiveCounter
 	CadenceErrServiceBusyCounter
@@ -2366,12 +2367,14 @@ const (
 	CadenceClientRequests
 	CadenceClientFailures
 	CadenceClientLatency
+	CadenceClientLatencyHistogram
 
 	CadenceTasklistRequests
 
 	CadenceDcRedirectionClientRequests
 	CadenceDcRedirectionClientFailures
 	CadenceDcRedirectionClientLatency
+	CadenceDcRedirectionClientLatencyHistogram
 
 	CadenceAuthorizationLatency
 	CadenceAuthorizationLatencyHistogram
@@ -2490,6 +2493,7 @@ const (
 	CadenceRequestsPerTaskListWithoutRollup
 	CadenceFailuresPerTaskList
 	CadenceLatencyPerTaskList
+	CadenceLatencyPerTaskListHistogram
 	CadenceErrBadRequestPerTaskListCounter
 	CadenceErrDomainNotActivePerTaskListCounter
 	CadenceErrServiceBusyPerTaskListCounter
@@ -3265,6 +3269,7 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		CadenceRequests:                                              {metricName: "cadence_requests", metricType: Counter},
 		CadenceFailures:                                              {metricName: "cadence_errors", metricType: Counter},
 		CadenceLatency:                                               {metricName: "cadence_latency", metricType: Timer},
+		CadenceLatencyHistogram:                                      {metricName: "cadence_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		CadenceErrBadRequestCounter:                                  {metricName: "cadence_errors_bad_request", metricType: Counter},
 		CadenceErrDomainNotActiveCounter:                             {metricName: "cadence_errors_domain_not_active", metricType: Counter},
 		CadenceErrServiceBusyCounter:                                 {metricName: "cadence_errors_service_busy", metricType: Counter},
@@ -3345,10 +3350,12 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		CadenceClientRequests:                                        {metricName: "cadence_client_requests", metricType: Counter},
 		CadenceClientFailures:                                        {metricName: "cadence_client_errors", metricType: Counter},
 		CadenceClientLatency:                                         {metricName: "cadence_client_latency", metricType: Timer},
+		CadenceClientLatencyHistogram:                                {metricName: "cadence_client_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		CadenceTasklistRequests:                                      {metricName: "cadence_tasklist_request", metricType: Counter},
 		CadenceDcRedirectionClientRequests:                           {metricName: "cadence_client_requests_redirection", metricType: Counter},
 		CadenceDcRedirectionClientFailures:                           {metricName: "cadence_client_errors_redirection", metricType: Counter},
 		CadenceDcRedirectionClientLatency:                            {metricName: "cadence_client_latency_redirection", metricType: Timer},
+		CadenceDcRedirectionClientLatencyHistogram:                   {metricName: "cadence_client_latency_redirection_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		CadenceAuthorizationLatency:                                  {metricName: "cadence_authorization_latency", metricType: Timer},
 		CadenceAuthorizationLatencyHistogram:                         {metricName: "cadence_authorization_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s},
 		DomainCachePrepareCallbacksLatency:                           {metricName: "domain_cache_prepare_callbacks_latency", metricType: Timer},
@@ -3453,6 +3460,9 @@ var MetricDefs = map[ServiceIdx]map[MetricIdx]metricDefinition{
 		},
 		CadenceLatencyPerTaskList: {
 			metricName: "cadence_latency_per_tl", metricRollupName: "cadence_latency", metricType: Timer,
+		},
+		CadenceLatencyPerTaskListHistogram: {
+			metricName: "cadence_latency_per_tl_ns", metricRollupName: "cadence_latency_ns", metricType: Histogram, exponentialBuckets: Low1ms100s,
 		},
 		CadenceErrBadRequestPerTaskListCounter: {
 			metricName: "cadence_errors_bad_request_per_tl", metricRollupName: "cadence_errors_bad_request", metricType: Counter,

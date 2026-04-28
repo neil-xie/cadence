@@ -88,9 +88,11 @@ func NewVisibilityArchiver(container *archiver.VisibilityBootstrapContainer, con
 func (v *visibilityArchiver) Archive(ctx context.Context, URI archiver.URI, request *archiver.ArchiveVisibilityRequest, opts ...archiver.ArchiveOption) (err error) {
 	scope := v.container.MetricsClient.Scope(metrics.HistoryArchiverScope, metrics.DomainTag(request.DomainName))
 	featureCatalog := archiver.GetFeatureCatalog(opts...)
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 			if isRetryableError(err) {
 				scope.IncCounter(metrics.VisibilityArchiverArchiveTransientErrorCount)

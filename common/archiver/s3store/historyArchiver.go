@@ -123,9 +123,11 @@ func (h *historyArchiver) Archive(
 ) (err error) {
 	scope := h.container.MetricsClient.Scope(metrics.HistoryArchiverScope, metrics.DomainTag(request.DomainName))
 	featureCatalog := archiver.GetFeatureCatalog(opts...)
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 			if persistence.IsTransientError(err) || isRetryableError(err) {
 				scope.IncCounter(metrics.HistoryArchiverArchiveTransientErrorCount)

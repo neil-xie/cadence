@@ -179,8 +179,8 @@ func (adh *adminHandlerImpl) AddSearchAttribute(
 ) (retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminAddSearchAttributeScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminAddSearchAttributeScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	// validate request
 	if request == nil {
@@ -252,8 +252,8 @@ func (adh *adminHandlerImpl) DescribeWorkflowExecution(
 ) (resp *types.AdminDescribeWorkflowExecutionResponse, retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminDescribeWorkflowExecutionScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminDescribeWorkflowExecutionScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -299,8 +299,8 @@ func (adh *adminHandlerImpl) RemoveTask(
 ) (retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminRemoveTaskScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminRemoveTaskScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || request.Type == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -603,8 +603,8 @@ func (adh *adminHandlerImpl) CloseShard(
 ) (retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminCloseShardScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminCloseShardScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -622,8 +622,8 @@ func (adh *adminHandlerImpl) ResetQueue(
 ) (retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminResetQueueScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminResetQueueScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || request.Type == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -645,8 +645,8 @@ func (adh *adminHandlerImpl) DescribeQueue(
 ) (resp *types.DescribeQueueResponse, retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminDescribeQueueScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminDescribeQueueScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || request.Type == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -665,8 +665,8 @@ func (adh *adminHandlerImpl) DescribeShardDistribution(
 ) (resp *types.DescribeShardDistributionResponse, retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	_, sw := adh.startRequestProfile(ctx, metrics.AdminDescribeShardDistributionScope)
-	defer sw.Stop()
+	swScope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminDescribeShardDistributionScope)
+	defer func() { sw.Stop(); swScope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	resp = &types.DescribeShardDistributionResponse{
 		NumberOfShards: int32(adh.numberOfHistoryShards),
@@ -693,8 +693,8 @@ func (adh *adminHandlerImpl) DescribeHistoryHost(
 ) (resp *types.DescribeHistoryHostResponse, retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminDescribeHistoryHostScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminDescribeHistoryHostScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || (request.ShardIDForHost == nil && request.ExecutionForHost == nil && request.HostAddress == nil) {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -716,8 +716,8 @@ func (adh *adminHandlerImpl) GetWorkflowExecutionRawHistoryV2(
 ) (resp *types.GetWorkflowExecutionRawHistoryV2Response, retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminGetWorkflowExecutionRawHistoryV2Scope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminGetWorkflowExecutionRawHistoryV2Scope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if err := adh.validateGetWorkflowExecutionRawHistoryV2Request(
 		request,
@@ -850,8 +850,8 @@ func (adh *adminHandlerImpl) DescribeCluster(
 ) (resp *types.DescribeClusterResponse, retError error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminDescribeClusterScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminDescribeClusterScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	// expose visibility store backend and if advanced options are available
 	ave := types.PersistenceFeature{
@@ -923,8 +923,8 @@ func (adh *adminHandlerImpl) GetReplicationMessages(
 ) (resp *types.GetReplicationMessagesResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminGetReplicationMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminGetReplicationMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -947,8 +947,8 @@ func (adh *adminHandlerImpl) GetDomainReplicationMessages(
 ) (resp *types.GetDomainReplicationMessagesResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminGetDomainReplicationMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminGetDomainReplicationMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1006,8 +1006,8 @@ func (adh *adminHandlerImpl) GetDLQReplicationMessages(
 ) (resp *types.GetDLQReplicationMessagesResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminGetDLQReplicationMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminGetDLQReplicationMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1030,8 +1030,8 @@ func (adh *adminHandlerImpl) ReapplyEvents(
 ) (err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminReapplyEventsScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminReapplyEventsScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -1070,8 +1070,8 @@ func (adh *adminHandlerImpl) ReadDLQMessages(
 ) (resp *types.ReadDLQMessagesResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminReadDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminReadDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1131,8 +1131,8 @@ func (adh *adminHandlerImpl) PurgeDLQMessages(
 ) (err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminPurgeDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminPurgeDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -1179,8 +1179,8 @@ func (adh *adminHandlerImpl) CountDLQMessages(
 ) (resp *types.CountDLQMessagesResponse, err error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
 
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminCountDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminCountDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	domain, err := adh.domainDLQHandler.Count(ctx, request.ForceFetch)
 	if err != nil {
@@ -1205,8 +1205,8 @@ func (adh *adminHandlerImpl) MergeDLQMessages(
 ) (resp *types.MergeDLQMessagesResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminMergeDLQMessagesScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminMergeDLQMessagesScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1261,8 +1261,8 @@ func (adh *adminHandlerImpl) RefreshWorkflowTasks(
 	request *types.RefreshWorkflowTasksRequest,
 ) (err error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminRefreshWorkflowTasksScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminRefreshWorkflowTasksScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -1291,8 +1291,8 @@ func (adh *adminHandlerImpl) ResendReplicationTasks(
 	request *types.ResendReplicationTasksRequest,
 ) (err error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminResendReplicationTasksScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminResendReplicationTasksScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -1325,8 +1325,8 @@ func (adh *adminHandlerImpl) GetCrossClusterTasks(
 ) (resp *types.GetCrossClusterTasksResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminGetCrossClusterTasksScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminGetCrossClusterTasksScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1348,8 +1348,8 @@ func (adh *adminHandlerImpl) RespondCrossClusterTasksCompleted(
 ) (resp *types.RespondCrossClusterTasksCompletedResponse, err error) {
 
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &err) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminRespondCrossClusterTasksCompletedScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminRespondCrossClusterTasksCompletedScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1513,11 +1513,12 @@ func (adh *adminHandlerImpl) validatePaginationToken(
 }
 
 // startRequestProfile initiates recording of request metrics
-func (adh *adminHandlerImpl) startRequestProfile(ctx context.Context, scope metrics.ScopeIdx) (metrics.Scope, metrics.Stopwatch) {
+func (adh *adminHandlerImpl) startRequestProfile(ctx context.Context, scope metrics.ScopeIdx) (metrics.Scope, metrics.Stopwatch, time.Time) {
 	metricsScope := adh.GetMetricsClient().Scope(scope).Tagged(metrics.DomainUnknownTag()).Tagged(metrics.GetContextTags(ctx)...)
+	swStart := time.Now()
 	sw := metricsScope.StartTimer(metrics.CadenceLatency)
 	metricsScope.IncCounter(metrics.CadenceRequests)
-	return metricsScope, sw
+	return metricsScope, sw, swStart
 }
 
 func (adh *adminHandlerImpl) error(err error, scope metrics.Scope) error {
@@ -1578,8 +1579,8 @@ func deserializeRawHistoryToken(bytes []byte) (*getWorkflowRawHistoryV2Token, er
 
 func (adh *adminHandlerImpl) GetDynamicConfig(ctx context.Context, request *types.GetDynamicConfigRequest) (_ *types.GetDynamicConfigResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminGetDynamicConfigScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminGetDynamicConfigScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || request.ConfigName == "" {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1622,8 +1623,8 @@ func (adh *adminHandlerImpl) GetDynamicConfig(ctx context.Context, request *type
 
 func (adh *adminHandlerImpl) UpdateDynamicConfig(ctx context.Context, request *types.UpdateDynamicConfigRequest) (retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminUpdateDynamicConfigScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminUpdateDynamicConfigScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || request.ConfigName == "" {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -1639,8 +1640,8 @@ func (adh *adminHandlerImpl) UpdateDynamicConfig(ctx context.Context, request *t
 
 func (adh *adminHandlerImpl) RestoreDynamicConfig(ctx context.Context, request *types.RestoreDynamicConfigRequest) (retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminRestoreDynamicConfigScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminRestoreDynamicConfigScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil || request.ConfigName == "" {
 		return adh.error(validate.ErrRequestNotSet, scope)
@@ -1666,8 +1667,8 @@ func (adh *adminHandlerImpl) RestoreDynamicConfig(ctx context.Context, request *
 
 func (adh *adminHandlerImpl) ListDynamicConfig(ctx context.Context, request *types.ListDynamicConfigRequest) (_ *types.ListDynamicConfigResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.AdminListDynamicConfigScope)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.AdminListDynamicConfigScope)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1697,8 +1698,8 @@ func (adh *adminHandlerImpl) ListDynamicConfig(ctx context.Context, request *typ
 
 func (adh *adminHandlerImpl) GetGlobalIsolationGroups(ctx context.Context, request *types.GetGlobalIsolationGroupsRequest) (_ *types.GetGlobalIsolationGroupsResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.GetGlobalIsolationGroups)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.GetGlobalIsolationGroups)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1713,8 +1714,8 @@ func (adh *adminHandlerImpl) GetGlobalIsolationGroups(ctx context.Context, reque
 
 func (adh *adminHandlerImpl) UpdateGlobalIsolationGroups(ctx context.Context, request *types.UpdateGlobalIsolationGroupsRequest) (_ *types.UpdateGlobalIsolationGroupsResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.UpdateGlobalIsolationGroups)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.UpdateGlobalIsolationGroups)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
 	}
@@ -1727,8 +1728,8 @@ func (adh *adminHandlerImpl) UpdateGlobalIsolationGroups(ctx context.Context, re
 
 func (adh *adminHandlerImpl) GetDomainIsolationGroups(ctx context.Context, request *types.GetDomainIsolationGroupsRequest) (_ *types.GetDomainIsolationGroupsResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.GetDomainIsolationGroups)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.GetDomainIsolationGroups)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
@@ -1743,8 +1744,8 @@ func (adh *adminHandlerImpl) GetDomainIsolationGroups(ctx context.Context, reque
 
 func (adh *adminHandlerImpl) UpdateDomainIsolationGroups(ctx context.Context, request *types.UpdateDomainIsolationGroupsRequest) (_ *types.UpdateDomainIsolationGroupsResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.UpdateDomainIsolationGroups)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.UpdateDomainIsolationGroups)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
 	}
@@ -1757,8 +1758,8 @@ func (adh *adminHandlerImpl) UpdateDomainIsolationGroups(ctx context.Context, re
 
 func (adh *adminHandlerImpl) GetDomainAsyncWorkflowConfiguraton(ctx context.Context, request *types.GetDomainAsyncWorkflowConfiguratonRequest) (_ *types.GetDomainAsyncWorkflowConfiguratonResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.GetDomainAsyncWorkflowConfiguraton)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.GetDomainAsyncWorkflowConfiguraton)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
 	}
@@ -1771,8 +1772,8 @@ func (adh *adminHandlerImpl) GetDomainAsyncWorkflowConfiguraton(ctx context.Cont
 
 func (adh *adminHandlerImpl) UpdateDomainAsyncWorkflowConfiguraton(ctx context.Context, request *types.UpdateDomainAsyncWorkflowConfiguratonRequest) (_ *types.UpdateDomainAsyncWorkflowConfiguratonResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.UpdateDomainAsyncWorkflowConfiguraton)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.UpdateDomainAsyncWorkflowConfiguraton)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
 	}
@@ -1785,8 +1786,8 @@ func (adh *adminHandlerImpl) UpdateDomainAsyncWorkflowConfiguraton(ctx context.C
 
 func (adh *adminHandlerImpl) UpdateTaskListPartitionConfig(ctx context.Context, request *types.UpdateTaskListPartitionConfigRequest) (_ *types.UpdateTaskListPartitionConfigResponse, retError error) {
 	defer func() { log.CapturePanic(recover(), adh.GetLogger(), &retError) }()
-	scope, sw := adh.startRequestProfile(ctx, metrics.UpdateTaskListPartitionConfig)
-	defer sw.Stop()
+	scope, sw, swStart := adh.startRequestProfile(ctx, metrics.UpdateTaskListPartitionConfig)
+	defer func() { sw.Stop(); scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(swStart)) }()
 	if request == nil {
 		return nil, adh.error(validate.ErrRequestNotSet, scope)
 	}

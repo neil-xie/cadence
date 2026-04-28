@@ -22,6 +22,7 @@ package s3store
 
 import (
 	"context"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -102,11 +103,13 @@ func (v *visibilityArchiver) Archive(
 ) (err error) {
 	scope := v.container.MetricsClient.Scope(metrics.VisibilityArchiverScope, metrics.DomainTag(request.DomainName))
 	featureCatalog := archiver.GetFeatureCatalog(opts...)
+	cadenceLatencyStart := time.Now()
 	sw := scope.StartTimer(metrics.CadenceLatency)
 	logger := archiver.TagLoggerWithArchiveVisibilityRequestAndURI(v.container.Logger, request, URI.String())
 	archiveFailReason := ""
 	defer func() {
 		sw.Stop()
+		scope.RecordHistogramDuration(metrics.CadenceLatencyHistogram, time.Since(cadenceLatencyStart))
 		if err != nil {
 			if isRetryableError(err) {
 				scope.IncCounter(metrics.VisibilityArchiverArchiveTransientErrorCount)
