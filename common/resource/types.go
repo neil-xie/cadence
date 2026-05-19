@@ -42,6 +42,7 @@ import (
 	"github.com/uber/cadence/common/clock"
 	"github.com/uber/cadence/common/cluster"
 	"github.com/uber/cadence/common/domain"
+	"github.com/uber/cadence/common/dynamicconfig"
 	"github.com/uber/cadence/common/dynamicconfig/configstore"
 	"github.com/uber/cadence/common/isolationgroup"
 	"github.com/uber/cadence/common/log"
@@ -129,6 +130,7 @@ type Resource interface {
 	GetIsolationGroupState() isolationgroup.State
 	GetIsolationGroupStore() configstore.Client
 	GetOperationalConfigStore() configstore.Client
+	GetOperationalDynamicConfig() *dynamicconfig.Collection
 
 	GetAsyncWorkflowQueueProvider() queue.Provider
 

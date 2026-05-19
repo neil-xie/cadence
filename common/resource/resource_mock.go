@@ -31,6 +31,7 @@ import (
 	clock "github.com/uber/cadence/common/clock"
 	cluster "github.com/uber/cadence/common/cluster"
 	domain "github.com/uber/cadence/common/domain"
+	dynamicconfig "github.com/uber/cadence/common/dynamicconfig"
 	configstore "github.com/uber/cadence/common/dynamicconfig/configstore"
 	isolationgroup "github.com/uber/cadence/common/isolationgroup"
 	log "github.com/uber/cadence/common/log"
@@ -554,6 +555,20 @@ func (m *MockResource) GetOperationalConfigStore() configstore.Client {
 func (mr *MockResourceMockRecorder) GetOperationalConfigStore() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationalConfigStore", reflect.TypeOf((*MockResource)(nil).GetOperationalConfigStore))
+}
+
+// GetOperationalDynamicConfig mocks base method.
+func (m *MockResource) GetOperationalDynamicConfig() *dynamicconfig.Collection {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOperationalDynamicConfig")
+	ret0, _ := ret[0].(*dynamicconfig.Collection)
+	return ret0
+}
+
+// GetOperationalDynamicConfig indicates an expected call of GetOperationalDynamicConfig.
+func (mr *MockResourceMockRecorder) GetOperationalDynamicConfig() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationalDynamicConfig", reflect.TypeOf((*MockResource)(nil).GetOperationalDynamicConfig))
 }
 
 // GetPayloadSerializer mocks base method.

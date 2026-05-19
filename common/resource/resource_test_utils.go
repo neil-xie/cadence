@@ -46,6 +46,7 @@ import (
 	"github.com/uber/cadence/common/clock"
 	"github.com/uber/cadence/common/cluster"
 	"github.com/uber/cadence/common/domain"
+	"github.com/uber/cadence/common/dynamicconfig"
 	"github.com/uber/cadence/common/dynamicconfig/configstore"
 	"github.com/uber/cadence/common/isolationgroup"
 	"github.com/uber/cadence/common/log"
@@ -482,6 +483,11 @@ func (s *Test) GetIsolationGroupStore() configstore.Client {
 // GetOperationalConfigStore returns the operational dynamic config store
 func (s *Test) GetOperationalConfigStore() configstore.Client {
 	return s.OperationalConfigStore
+}
+
+// GetOperationalDynamicConfig returns a Collection backed by a no-op client for tests.
+func (s *Test) GetOperationalDynamicConfig() *dynamicconfig.Collection {
+	return dynamicconfig.NewCollection(dynamicconfig.NewNopClient(), s.Logger)
 }
 
 func (s *Test) GetAsyncWorkflowQueueProvider() queue.Provider {
