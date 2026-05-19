@@ -106,11 +106,12 @@ type (
 		ExecutionMgr    *mocks.ExecutionManager
 		PersistenceBean *persistenceClient.MockBean
 
-		IsolationGroups     *isolationgroup.MockState
-		IsolationGroupStore *configstore.MockClient
-		HostName            string
-		Logger              log.Logger
-		taskvalidator       taskvalidator.Checker
+		IsolationGroups        *isolationgroup.MockState
+		IsolationGroupStore    *configstore.MockClient
+		OperationalConfigStore *configstore.MockClient
+		HostName               string
+		Logger                 log.Logger
+		taskvalidator          taskvalidator.Checker
 
 		AsyncWorkflowQueueProvider *queue.MockProvider
 
@@ -476,6 +477,11 @@ func (s *Test) GetIsolationGroupState() isolationgroup.State {
 // isolation-group stores
 func (s *Test) GetIsolationGroupStore() configstore.Client {
 	return s.IsolationGroupStore
+}
+
+// GetOperationalConfigStore returns the operational dynamic config store
+func (s *Test) GetOperationalConfigStore() configstore.Client {
+	return s.OperationalConfigStore
 }
 
 func (s *Test) GetAsyncWorkflowQueueProvider() queue.Provider {

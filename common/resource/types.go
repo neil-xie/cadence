@@ -128,6 +128,7 @@ type Resource interface {
 	// GetIsolationGroupState returns the isolationGroupState
 	GetIsolationGroupState() isolationgroup.State
 	GetIsolationGroupStore() configstore.Client
+	GetOperationalConfigStore() configstore.Client
 
 	GetAsyncWorkflowQueueProvider() queue.Provider
 

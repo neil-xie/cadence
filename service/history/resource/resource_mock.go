@@ -533,6 +533,20 @@ func (mr *MockResourceMockRecorder) GetMetricsScope() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMetricsScope", reflect.TypeOf((*MockResource)(nil).GetMetricsScope))
 }
 
+// GetOperationalConfigStore mocks base method.
+func (m *MockResource) GetOperationalConfigStore() configstore.Client {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOperationalConfigStore")
+	ret0, _ := ret[0].(configstore.Client)
+	return ret0
+}
+
+// GetOperationalConfigStore indicates an expected call of GetOperationalConfigStore.
+func (mr *MockResourceMockRecorder) GetOperationalConfigStore() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOperationalConfigStore", reflect.TypeOf((*MockResource)(nil).GetOperationalConfigStore))
+}
+
 // GetPayloadSerializer mocks base method.
 func (m *MockResource) GetPayloadSerializer() persistence.PayloadSerializer {
 	m.ctrl.T.Helper()

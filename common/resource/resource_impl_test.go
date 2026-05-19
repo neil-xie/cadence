@@ -39,6 +39,7 @@ import (
 	"github.com/uber/cadence/common/cluster"
 	"github.com/uber/cadence/common/config"
 	"github.com/uber/cadence/common/dynamicconfig"
+	"github.com/uber/cadence/common/dynamicconfig/configstore"
 	"github.com/uber/cadence/common/dynamicconfig/dynamicproperties"
 	"github.com/uber/cadence/common/log/testlogger"
 	"github.com/uber/cadence/common/membership"
@@ -254,5 +255,25 @@ func TestStartStop(t *testing.T) {
 	assert.NotNil(t, i.GetDispatcher())
 	assert.NotNil(t, i.GetIsolationGroupState())
 	assert.Nil(t, i.GetIsolationGroupStore())
+	assert.Nil(t, i.GetOperationalConfigStore())
 	assert.Equal(t, params.AsyncWorkflowQueueProvider, i.GetAsyncWorkflowQueueProvider())
+}
+
+func TestCreateOperationalConfigStoreOrDefault_OverrideIsReturned(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	override := configstore.NewMockClient(ctrl)
+	got := createOperationalConfigStoreOrDefault(&Params{OperationalConfigStore: override}, nil)
+	assert.Same(t, override, got)
+}
+
+func TestCreateOperationalConfigStoreOrDefault_NilWhenPersistenceUnsupported(t *testing.T) {
+	logger := testlogger.New(t)
+	dc := dynamicconfig.NewCollection(dynamicconfig.NewInMemoryClient(), logger)
+	// PersistenceConfig with no DefaultStore configured cannot back a configstore.
+	got := createOperationalConfigStoreOrDefault(&Params{
+		Logger:            logger,
+		MetricsClient:     metrics.NewNoopMetricsClient(),
+		PersistenceConfig: config.Persistence{},
+	}, dc)
+	assert.Nil(t, got)
 }
