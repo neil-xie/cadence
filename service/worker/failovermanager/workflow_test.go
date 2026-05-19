@@ -1002,6 +1002,39 @@ func (s *failoverWorkflowTestSuite) TestShouldFailover_WithClusterAttributeFilte
 			expected:      false,
 		},
 		{
+			name: "when attrs is empty (non-nil), active-active domain with matching attribute is not included",
+			domain: &types.DescribeDomainResponse{
+				IsGlobalDomain: true,
+				DomainInfo:     &types.DomainInfo{Data: map[string]string{constants.DomainDataKeyForManagedFailover: "true"}},
+				ReplicationConfiguration: &types.DomainReplicationConfiguration{
+					ActiveClusterName: "c2",
+					ActiveClusters: &types.ActiveClusters{
+						AttributeScopes: map[string]types.ClusterAttributeScope{
+							"region": {ClusterAttributes: map[string]types.ActiveClusterInfo{
+								"us-west": {ActiveClusterName: "c1"},
+							}},
+						},
+					},
+				},
+			},
+			sourceCluster: "c1",
+			attrs:         []types.ClusterAttribute{},
+			expected:      false,
+		},
+		{
+			name: "when attrs is empty (non-nil), domain included via active cluster name",
+			domain: &types.DescribeDomainResponse{
+				IsGlobalDomain: true,
+				DomainInfo:     &types.DomainInfo{Data: map[string]string{constants.DomainDataKeyForManagedFailover: "true"}},
+				ReplicationConfiguration: &types.DomainReplicationConfiguration{
+					ActiveClusterName: "c1",
+				},
+			},
+			sourceCluster: "c1",
+			attrs:         []types.ClusterAttribute{},
+			expected:      true,
+		},
+		{
 			name: "when default active cluster name is on source cluster and a filtered attribute is not, should be included via active cluster name",
 			domain: &types.DescribeDomainResponse{
 				IsGlobalDomain: true,
