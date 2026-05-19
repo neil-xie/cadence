@@ -1641,6 +1641,13 @@ const (
 	// Allowed filters: DomainName, TaskListName
 	HistoryTaskListNiceValue
 
+	// OperationalConfigStoreUpdateRetryAttempts is the number of attempts
+	// to push a value to the operational dynamic config store on conflict.
+	// KeyName: system.operationalConfigStoreUpdateRetryAttempts
+	// Value type: Int
+	// Default value: 1
+	OperationalConfigStoreUpdateRetryAttempts
+
 	// LastIntKey must be the last one in this const group
 	LastIntKey
 )
@@ -3383,6 +3390,27 @@ const (
 	// Allowed filters: namespace
 	ShardDistributorLoadBalancingGreedyLoadSmoothingTimeConstant
 
+	// OperationalConfigStorePollInterval controls how often the operational
+	// dynamic config store re-reads its snapshot from the primary database.
+	// KeyName: system.operationalConfigStorePollInterval
+	// Value type: Duration
+	// Default value: 2 seconds
+	OperationalConfigStorePollInterval
+
+	// OperationalConfigStoreFetchTimeout is the per-call timeout used when
+	// fetching the operational dynamic config snapshot from the primary database.
+	// KeyName: system.operationalConfigStoreFetchTimeout
+	// Value type: Duration
+	// Default value: 2 seconds
+	OperationalConfigStoreFetchTimeout
+
+	// OperationalConfigStoreUpdateTimeout is the per-call timeout used when
+	// writing an operational dynamic config snapshot to the primary database.
+	// KeyName: system.operationalConfigStoreUpdateTimeout
+	// Value type: Duration
+	// Default value: 2 seconds
+	OperationalConfigStoreUpdateTimeout
+
 	// LastDurationKey must be the last one in this const group
 	LastDurationKey
 )
@@ -4585,6 +4613,11 @@ var IntKeys = map[IntKey]DynamicInt{
 		Description:  "HistoryTaskListNiceValue is the nice value for task processing priority per domain and task list",
 		DefaultValue: 0,
 		Filters:      []Filter{DomainName, TaskListName},
+	},
+	OperationalConfigStoreUpdateRetryAttempts: {
+		KeyName:      "system.operationalConfigStoreUpdateRetryAttempts",
+		Description:  "Number of attempts to push a value to the operational dynamic config store on conflict",
+		DefaultValue: 1,
 	},
 }
 
@@ -6091,6 +6124,21 @@ var DurationKeys = map[DurationKey]DynamicDuration{
 		Filters:      []Filter{Namespace},
 		Description:  "ShardDistributorLoadBalancingGreedyLoadSmoothingTimeConstant is the time constant for exponential smoothing of shard load in greedy load balancing mode",
 		DefaultValue: time.Minute,
+	},
+	OperationalConfigStorePollInterval: {
+		KeyName:      "system.operationalConfigStorePollInterval",
+		Description:  "How often the operational dynamic config store re-reads its snapshot from the primary database",
+		DefaultValue: time.Second * 2,
+	},
+	OperationalConfigStoreFetchTimeout: {
+		KeyName:      "system.operationalConfigStoreFetchTimeout",
+		Description:  "Per-call timeout for fetching the operational dynamic config snapshot from the primary database",
+		DefaultValue: time.Second * 2,
+	},
+	OperationalConfigStoreUpdateTimeout: {
+		KeyName:      "system.operationalConfigStoreUpdateTimeout",
+		Description:  "Per-call timeout for writing an operational dynamic config snapshot to the primary database",
+		DefaultValue: time.Second * 2,
 	},
 }
 
