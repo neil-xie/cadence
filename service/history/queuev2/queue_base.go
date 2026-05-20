@@ -105,6 +105,7 @@ func newQueueBase(
 	metricsScope metrics.Scope,
 	category persistence.HistoryTaskCategory,
 	taskExecutor task.Executor,
+	queueReader QueueReader,
 	options *Options,
 ) *queueBase {
 	timeSource := shard.GetTimeSource()
@@ -140,7 +141,6 @@ func newQueueBase(
 			shard.GetConfig().TaskCriticalRetryCount,
 		)
 	}
-	queueReader := NewQueueReader(shard, category, options.MaxPollInterval, options.MaxPollIntervalJitterCoefficient)
 	monitor := NewMonitor(
 		category,
 		&MonitorOptions{
