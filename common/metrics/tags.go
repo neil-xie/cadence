@@ -393,11 +393,6 @@ func ActiveClusterLookupFnTag(fn string) Tag {
 	return metricWithUnknown("fn", fn)
 }
 
-// ActiveClusterSelectionStrategyTag returns a new active cluster selection strategy tag.
-func ActiveClusterSelectionStrategyTag(strategy string) Tag {
-	return metricWithUnknown("strategy", strategy)
-}
-
 // OverlapPolicyTag returns a new overlap_policy tag for scheduler metrics.
 func OverlapPolicyTag(value string) Tag {
 	return metricWithUnknown(overlapPolicy, value)

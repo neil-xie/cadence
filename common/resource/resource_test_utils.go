@@ -108,8 +108,8 @@ type (
 		PersistenceBean *persistenceClient.MockBean
 
 		IsolationGroups        *isolationgroup.MockState
-		IsolationGroupStore    *configstore.MockClient
-		OperationalConfigStore *configstore.MockClient
+		IsolationGroupStore    configstore.Client
+		OperationalConfigStore configstore.Client
 		HostName               string
 		Logger                 log.Logger
 		taskvalidator          taskvalidator.Checker
