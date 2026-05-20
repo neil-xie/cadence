@@ -108,6 +108,7 @@ func TestNewConfig(t *testing.T) {
 		"ExcludeShortLivedTaskListsFromShardManager": {dynamicproperties.MatchingExcludeShortLivedTaskListsFromShardManager, false},
 		"EmergencyOffboardingFromShardManager":       {dynamicproperties.MatchingEmergencyOffboardingFromShardManager, false},
 		"PercentageOnboardedToShardManager":          {dynamicproperties.MatchingPercentageOnboardedToShardManager, 0},
+		"RecordTaskStartedTimeout":                   {dynamicproperties.MatchingRecordTaskStartedTimeout, time.Duration(43)},
 		"MinTaskListWritePartitions":                 {dynamicproperties.MatchingTaskListMinimumWritePartitions, 1},
 	}
 	client := dynamicconfig.NewInMemoryClient()

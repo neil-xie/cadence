@@ -67,10 +67,6 @@ const (
 	// _defaultSDReportTTL is the default TTL for shard status reports from matching executor to shard distributor.
 	// This controls how frequently the executor reports its shard load/status to the distributor.
 	_defaultSDReportTTL = 1 * time.Minute
-	// _recordTaskStartedTimeout is the maximum time allowed for RecordDecisionTaskStarted or RecordActivityTaskStarted
-	// Any time we spend attempting to start an individual task is blocking that poller from starting a different task.
-	// If a task is taking too long we'd rather try other tasks to maintain higher throughput.
-	_recordTaskStartedTimeout = time.Second
 )
 
 // Implements matching.Engine
@@ -1340,10 +1336,11 @@ func (e *matchingEngineImpl) recordDecisionTaskStarted(
 		resp, err = e.historyService.RecordDecisionTaskStarted(ctx, request)
 		return err
 	}
+	requestTimeout := e.config.RecordTaskStartedTimeout(pollReq.Domain)
 	throttleRetry := backoff.NewThrottleRetry(
 		backoff.WithRetryPolicy(recordTaskStartedRetryPolicy),
 		backoff.WithRetryableError(isMatchingRetryableError),
-		backoff.WithOperationTimeout(_recordTaskStartedTimeout),
+		backoff.WithOperationTimeout(requestTimeout),
 		backoff.WithContextExpiration(),
 	)
 	err := throttleRetry.Do(ctx, op)
@@ -1369,10 +1366,11 @@ func (e *matchingEngineImpl) recordActivityTaskStarted(
 		resp, err = e.historyService.RecordActivityTaskStarted(ctx, request)
 		return err
 	}
+	requestTimeout := e.config.RecordTaskStartedTimeout(pollReq.Domain)
 	throttleRetry := backoff.NewThrottleRetry(
 		backoff.WithRetryPolicy(recordTaskStartedRetryPolicy),
 		backoff.WithRetryableError(isMatchingRetryableError),
-		backoff.WithOperationTimeout(_recordTaskStartedTimeout),
+		backoff.WithOperationTimeout(requestTimeout),
 		backoff.WithContextExpiration(),
 	)
 	err := throttleRetry.Do(ctx, op)
