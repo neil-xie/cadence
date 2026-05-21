@@ -1655,6 +1655,7 @@ func (adh *adminHandlerImpl) UpdateOperationalDynamicConfig(ctx context.Context,
 	if err != nil {
 		return err
 	}
+	adh.logOperationalConfigChange(ctx, "Update", request.ConfigName, request.ConfigValues)
 	return adh.updateDynamicConfigValue(ctx, scope, client, request.ConfigName, request.ConfigValues)
 }
 
@@ -1669,6 +1670,7 @@ func (adh *adminHandlerImpl) RestoreOperationalDynamicConfig(ctx context.Context
 	if err != nil {
 		return err
 	}
+	adh.logOperationalConfigChange(ctx, "Restore", request.ConfigName, request.Filters)
 	return adh.restoreDynamicConfigValue(ctx, scope, client, request.ConfigName, request.Filters)
 }
 
@@ -1779,7 +1781,6 @@ func (adh *adminHandlerImpl) updateDynamicConfigValue(
 	if err != nil {
 		return err
 	}
-	adh.logOperationalConfigChange(ctx, "Update", configName, values)
 	return client.UpdateValue(keyVal, values)
 }
 
@@ -1803,7 +1804,6 @@ func (adh *adminHandlerImpl) restoreDynamicConfigValue(
 			return adh.error(validate.ErrInvalidFilters, scope)
 		}
 	}
-	adh.logOperationalConfigChange(ctx, "Restore", configName, filters)
 	return client.RestoreValue(keyVal, convFilters)
 }
 
