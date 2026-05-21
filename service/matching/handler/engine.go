@@ -112,6 +112,7 @@ type (
 		failoverNotificationVersion    int64
 		ShardDistributorMatchingConfig clientcommon.Config
 		drainObserver                  clientcommon.DrainSignalObserver
+		percentageOnboarded            membership.PercentageOnboarded
 	}
 )
 
@@ -142,6 +143,7 @@ func NewEngine(
 	shardDistributorClient executorclient.Client,
 	ShardDistributorMatchingConfig clientcommon.Config,
 	drainObserver clientcommon.DrainSignalObserver,
+	percentageOnboarded membership.PercentageOnboarded,
 ) Engine {
 	e := &matchingEngineImpl{
 		taskListRegistry:               tasklist.NewTaskListRegistry(metricsClient),
@@ -164,6 +166,7 @@ func NewEngine(
 		timeSource:                     timeSource,
 		ShardDistributorMatchingConfig: ShardDistributorMatchingConfig,
 		drainObserver:                  drainObserver,
+		percentageOnboarded:            percentageOnboarded,
 	}
 
 	e.setupExecutor(shardDistributorClient)
@@ -1519,15 +1522,8 @@ func (e *matchingEngineImpl) isShuttingDown() bool {
 	}
 }
 
-// isExcludedFromShardDistributor returns true if the task list should bypass the
-// ShardDistributor and executor, and instead rely on local hash-ring assignment.
-// This applies to short-lived task lists (e.g. sticky or bits task lists whose names
-// contain a UUID) when the corresponding feature flag is enabled.
 func (e *matchingEngineImpl) isExcludedFromShardDistributor(taskListName string) bool {
-	if e.config.EmergencyOffboardingFromShardManager() {
-		return true
-	}
-	return membership.TaskListExcludedFromShardDistributor(taskListName, uint64(e.config.PercentageOnboardedToShardManager()), e.config.ExcludeShortLivedTaskListsFromShardManager())
+	return membership.TaskListExcludedFromShardDistributor(taskListName, uint64(e.percentageOnboarded.Value()), e.config.ExcludeShortLivedTaskListsFromShardManager())
 }
 
 func (e *matchingEngineImpl) domainChangeCallback(nextDomains []*cache.DomainCacheEntry) {
