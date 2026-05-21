@@ -1167,6 +1167,7 @@ func TestEnqueueBufferedFire(t *testing.T) {
 		initialSkipped     int64
 		enqueueTime        time.Time
 		trigger            TriggerSource
+		enqueueBackfillID  string
 		wantFires          []BufferedFire
 		wantSkippedRuns    int64
 		wantOverflowReason string
@@ -1245,6 +1246,17 @@ func TestEnqueueBufferedFire(t *testing.T) {
 				{ScheduledTime: t0, TriggerSource: TriggerSourceBackfill, OverlapPolicy: types.ScheduleOverlapPolicyBuffer},
 			},
 		},
+		{
+			name:              "backfill id is preserved on buffered fire",
+			bufferLimit:       0,
+			initialFires:      nil,
+			enqueueTime:       t0,
+			trigger:           TriggerSourceBackfill,
+			enqueueBackfillID: "bf-abc",
+			wantFires: []BufferedFire{
+				{ScheduledTime: t0, TriggerSource: TriggerSourceBackfill, OverlapPolicy: types.ScheduleOverlapPolicyBuffer, BackfillID: "bf-abc"},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -1257,7 +1269,7 @@ func TestEnqueueBufferedFire(t *testing.T) {
 				SkippedRuns:   tt.initialSkipped,
 			}
 			scope := tally.NewTestScope("", nil)
-			enqueueBufferedFire(testLogger, scope, input, state, tt.enqueueTime, tt.trigger, types.ScheduleOverlapPolicyBuffer)
+			enqueueBufferedFire(testLogger, scope, input, state, tt.enqueueTime, tt.trigger, types.ScheduleOverlapPolicyBuffer, tt.enqueueBackfillID)
 			assert.Equal(t, tt.wantFires, state.BufferedFires)
 			assert.Equal(t, tt.wantSkippedRuns, state.SkippedRuns)
 
@@ -1344,12 +1356,41 @@ func TestProcessScheduleFireBufferEnqueuesWhenQueueNonEmpty(t *testing.T) {
 	// nil ctx is safe because the BUFFER+non-empty-queue branch returns before
 	// touching workflow.ExecuteLocalActivity. If the fast path were ever
 	// removed, this call would panic — which is the property we want to lock in.
-	processScheduleFire(nil, testLogger, scope, input, state, liveFire, TriggerSourceSchedule, types.ScheduleOverlapPolicyBuffer)
+	processScheduleFire(nil, testLogger, scope, input, state, liveFire, TriggerSourceSchedule, types.ScheduleOverlapPolicyBuffer, "")
 
 	require.Len(t, state.BufferedFires, 2, "live fire should be enqueued at the tail")
 	assert.Equal(t, t0, state.BufferedFires[0].ScheduledTime, "older queued fire stays at head")
 	assert.Equal(t, liveFire, state.BufferedFires[1].ScheduledTime, "live fire goes to tail")
 	assert.Equal(t, liveFire, state.LastRunTime, "LastRunTime should still advance even on the fast path")
+}
+
+// TestProcessScheduleFireBufferPreservesBackfillID verifies the BUFFER fast path
+// passes BackfillID into the queued BufferedFire for backfill-driven fires.
+func TestProcessScheduleFireBufferPreservesBackfillID(t *testing.T) {
+	t0 := time.Date(2026, 1, 15, 10, 0, 0, 0, time.UTC)
+	input := &SchedulerWorkflowInput{
+		Spec: types.ScheduleSpec{CronExpression: "* * * * *"},
+		Action: types.ScheduleAction{
+			StartWorkflow: &types.StartWorkflowAction{
+				WorkflowType: &types.WorkflowType{Name: "wf"},
+				TaskList:     &types.TaskList{Name: "tl"},
+			},
+		},
+		Policies: types.SchedulePolicies{OverlapPolicy: types.ScheduleOverlapPolicyBuffer},
+	}
+	state := &SchedulerWorkflowState{
+		BufferedFires: []BufferedFire{
+			{ScheduledTime: t0, TriggerSource: TriggerSourceSchedule, OverlapPolicy: types.ScheduleOverlapPolicyBuffer},
+		},
+	}
+	scope := tally.NewTestScope("", nil)
+	liveFire := t0.Add(2 * time.Minute)
+
+	processScheduleFire(nil, testLogger, scope, input, state, liveFire, TriggerSourceBackfill, types.ScheduleOverlapPolicyBuffer, "bf-fast")
+
+	require.Len(t, state.BufferedFires, 2)
+	assert.Equal(t, "bf-fast", state.BufferedFires[1].BackfillID, "backfill id should be preserved on buffered fire")
+	assert.Equal(t, TriggerSourceBackfill, state.BufferedFires[1].TriggerSource)
 }
 
 // TestCatchUpWatermark verifies the catch-up watermark is the max of the
