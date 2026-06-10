@@ -128,12 +128,12 @@ func newProgress(lower, upper persistence.HistoryTaskKey) *GetTaskProgress {
 func TestCachedQueueReader_Modes(t *testing.T) {
 	tests := []struct {
 		mode     string
-		enabled  bool
 		disabled bool
 	}{
-		{"enabled", true, false},
-		{"disabled", false, true},
-		{"unknown", false, true},
+		{"enabled", false},
+		{"shadow", false},
+		{"disabled", true},
+		{"unknown", true},
 	}
 	for _, tc := range tests {
 		t.Run(tc.mode, func(t *testing.T) {
@@ -141,7 +141,6 @@ func TestCachedQueueReader_Modes(t *testing.T) {
 			r, _ := setupMocksForCachedQueueReader(t, ctrl, func(o *cachedQueueReaderOptions) {
 				o.Mode = dynamicproperties.GetStringPropertyFn(tc.mode)
 			})
-			assert.Equal(t, tc.enabled, r.isEnabled(), "mode %q: isEnabled", tc.mode)
 			assert.Equal(t, tc.disabled, r.isDisabled(), "mode %q: isDisabled", tc.mode)
 		})
 	}

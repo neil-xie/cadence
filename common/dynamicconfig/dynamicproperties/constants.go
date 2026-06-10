@@ -2368,13 +2368,6 @@ const (
 	// Default value: false
 	// Allowed filters: ShardID
 	EnableTimerQueueV2PendingTaskCountAlert
-	// TimerProcessorEnableCachedScheduledQueue enables the cached scheduled queue for timer tasks
-	// KeyName: history.timerProcessorEnableCachedScheduledQueue
-	// Value type: Bool
-	// Default value: false
-	// Allowed filters: N/A
-	TimerProcessorEnableCachedScheduledQueue
-
 	// EnableActiveClusterSelectionPolicyInStartWorkflow is to enable active cluster selection policy in start workflow requests for a domain
 	// KeyName: frontend.enableActiveClusterSelectionPolicyInStartWorkflow
 	// Value type: Bool
@@ -2836,7 +2829,10 @@ const (
 	// Allowed filters: domainName
 	HistoryTaskDLQMode
 
-	// TimerProcessorCachedQueueReaderMode controls cached queue reader mode: disabled/shadow/enabled
+	// TimerProcessorCachedQueueReaderMode controls whether and how the cached queue reader is used.
+	// "disabled" (default): no cached reader, plain scheduledQueue is used.
+	// "shadow": cached reader is created and prefetches, but all reads are forwarded to the base reader.
+	// "enabled": cached reader fully active.
 	// KeyName: history.timerProcessorCachedQueueReaderMode
 	// Value type: string enum: "disabled", "shadow", "enabled"
 	// Default value: "disabled"
@@ -5327,11 +5323,6 @@ var BoolKeys = map[BoolKey]DynamicBool{
 		Filters:      []Filter{ShardID},
 		DefaultValue: false,
 	},
-	TimerProcessorEnableCachedScheduledQueue: {
-		KeyName:      "history.timerProcessorEnableCachedScheduledQueue",
-		Description:  "TimerProcessorEnableCachedScheduledQueue enables the cached scheduled queue for timer tasks",
-		DefaultValue: false,
-	},
 	EnableActiveClusterSelectionPolicyInStartWorkflow: {
 		KeyName:      "frontend.enableActiveClusterSelectionPolicyInStartWorkflow",
 		Description:  "EnableActiveClusterSelectionPolicyInStartWorkflow is to enable active cluster selection policy in start workflow requests for a domain",
@@ -5685,7 +5676,7 @@ var StringKeys = map[StringKey]DynamicString{
 	},
 	TimerProcessorCachedQueueReaderMode: {
 		KeyName:      "history.timerProcessorCachedQueueReaderMode",
-		Description:  "TimerProcessorCachedQueueReaderMode controls cached queue reader mode: disabled/shadow/enabled",
+		Description:  "TimerProcessorCachedQueueReaderMode controls whether and how the cached queue reader is used: disabled/shadow/enabled",
 		DefaultValue: "disabled",
 		Filters:      []Filter{ShardID},
 	},
