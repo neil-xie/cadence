@@ -68,18 +68,6 @@ services:
     pprof:
       port: 8941
 
-  shard-distributor:
-    rpc:
-      port: 7952
-      grpcPort: 7942
-      bindOnLocalHost: true
-    metrics:
-      statsd:
-        hostPort: "127.0.0.1:8125"
-        prefix: "cadence"
-    pprof:
-      port: 7953
-
 clusterGroupMetadata:
   failoverVersionIncrement: 10
   primaryClusterName: "cluster0"

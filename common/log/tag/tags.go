@@ -1170,29 +1170,6 @@ func ActivityTaskState(state int32) Tag {
 	return newInt32("activity-task-state", state)
 }
 
-func ShardNamespace(name string) Tag {
-	return newStringTag("shard-namespace", name)
-}
-
-func ShardExecutor(ID string) Tag {
-	return newStringTag("shard-executor", ID)
-}
-
-func ShardExecutors(executorIDs []string) Tag {
-	return newStringsTag("shard-executors", executorIDs)
-}
-
-func ShardKey(shardKey string) Tag {
-	return newStringTag("shard-key", shardKey)
-}
-
-func ShardStatus(status string) Tag {
-	return newStringTag("shard-status", status)
-}
-func ShardLoad(load string) Tag {
-	return newStringTag("shard-load", load)
-}
-
 func ElectionDelay(t time.Duration) Tag {
 	return newDurationTag("election-delay", t)
 }
@@ -1208,10 +1185,6 @@ func DynamicConfigLinearIteratorSpec(spec interface{}) Tag {
 
 func HashRingResult(addr string) Tag {
 	return newStringTag("hashring-result", addr)
-}
-
-func ShardDistributorResult(addr string) Tag {
-	return newStringTag("shard-distributor-result", addr)
 }
 
 // PeerHostname returns a tag for peer hostname

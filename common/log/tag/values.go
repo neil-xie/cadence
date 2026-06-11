@@ -468,10 +468,6 @@ var (
 	MatchingClientOperationRespondQueryTaskCompleted      = clientOperation("matching-respond-query-task-completed")
 	MatchingClientOperationUpdateTaskListPartitionConfig  = clientOperation("matching-update-task-list-partition-config")
 	MatchingClientOperationRefreshTaskListPartitionConfig = clientOperation("matching-refresh-task-list-partition-config")
-
-	ShardDistributorClientOperationGetShardOwner       = clientOperation("shard-distributor-get-shard-owner")
-	ShardDistributorClientOperationWatchNamespaceState = clientOperation("shard-distributor-watch-namespace-state")
-	ShardDistributorExecutorClientOperationHeartbeat   = clientOperation("shard-distributor-executor-heartbeat")
 )
 
 // Pre-defined values for TagIDType

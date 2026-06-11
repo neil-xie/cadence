@@ -329,9 +329,6 @@ var HistogramMigrationMetrics = map[string]struct{}{
 	"diagnostics_workflow_execution_latency":    {},
 	"diagnostics_workflow_execution_latency_ns": {},
 
-	"shard_distributor_latency":    {},
-	"shard_distributor_latency_ns": {},
-
 	"global_ratelimiter_update_latency":    {},
 	"global_ratelimiter_update_latency_ns": {},
 

@@ -358,26 +358,6 @@ func IsRetryTag(retry bool) Tag {
 	return simpleMetric{key: isRetry, value: strconv.FormatBool(retry)}
 }
 
-func NamespaceTag(namespace string) Tag {
-	return metricWithUnknown("namespace", namespace)
-}
-
-func NamespaceTypeTag(namespaceType string) Tag {
-	return metricWithUnknown("namespace_type", namespaceType)
-}
-
-func HandoverTypeTag(handoverType string) Tag {
-	return metricWithUnknown("handover_type", handoverType)
-}
-
-func ExecutorStatusTag(status string) Tag {
-	return metricWithUnknown("executor_status", status)
-}
-
-func ShardDistributorWatchTypeTag(watchType string) Tag {
-	return metricWithUnknown("watch_type", watchType)
-}
-
 func TaskCategoryTag(category string) Tag {
 	return metricWithUnknown("task_category", category)
 }

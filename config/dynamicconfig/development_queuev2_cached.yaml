@@ -93,18 +93,3 @@ history.enableTimerQueueV2:
 history.timerProcessorCachedQueueReaderMode:
 - value: "enabled"
   constraints: {}
-
-shardDistributor.migrationMode:
-  - value: "onboarded"
-  - value: "local_pass"
-    constraints:
-      namespace: "test-local-passthrough"
-  - value: "local_pass_shadow"
-    constraints:
-      namespace: "test-local-passthrough-shadow"
-  - value: "distributed_pass"
-    constraints:
-      namespace: "test-distributed-passthrough"
-  - value: "distributed_pass"
-    constraints:
-      namespace: "test-external-assignment"
