@@ -6,6 +6,11 @@ import (
 	"os"
 	"time"
 
+	sharddistributorv1 "github.com/cadence-workflow/shard-manager/.gen/proto/sharddistributor/v1"
+	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/clientcommon"
+	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/executorclient"
+	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/spectatorclient"
+	smsdconfig "github.com/cadence-workflow/shard-manager/service/sharddistributor/config"
 	"github.com/uber-go/tally"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/fx"
@@ -14,15 +19,10 @@ import (
 	"go.uber.org/yarpc/transport/grpc"
 	"go.uber.org/zap"
 
-	sharddistributorv1 "github.com/uber/cadence/.gen/proto/sharddistributor/v1"
 	"github.com/uber/cadence/common/clock"
 	"github.com/uber/cadence/common/log"
 	"github.com/uber/cadence/service/sharddistributor/canary"
 	canaryConfig "github.com/uber/cadence/service/sharddistributor/canary/config"
-	"github.com/uber/cadence/service/sharddistributor/client/clientcommon"
-	"github.com/uber/cadence/service/sharddistributor/client/executorclient"
-	"github.com/uber/cadence/service/sharddistributor/client/spectatorclient"
-	"github.com/uber/cadence/service/sharddistributor/config"
 	"github.com/uber/cadence/tools/common/commoncli"
 )
 
@@ -59,8 +59,8 @@ func runApp(c *cli.Context) {
 func opts(fixedNamespace, ephemeralNamespace, endpoint string, canaryGRPCPort int, numFixedExecutors, numEphemeral int) fx.Option {
 	configuration := clientcommon.Config{
 		Namespaces: []clientcommon.NamespaceConfig{
-			{Namespace: fixedNamespace, HeartBeatInterval: 1 * time.Second, MigrationMode: config.MigrationModeONBOARDED},
-			{Namespace: ephemeralNamespace, HeartBeatInterval: 1 * time.Second, MigrationMode: config.MigrationModeONBOARDED},
+			{Namespace: fixedNamespace, HeartBeatInterval: 1 * time.Second, MigrationMode: smsdconfig.MigrationModeONBOARDED},
+			{Namespace: ephemeralNamespace, HeartBeatInterval: 1 * time.Second, MigrationMode: smsdconfig.MigrationModeONBOARDED},
 		},
 	}
 
@@ -116,6 +116,7 @@ func opts(fixedNamespace, ephemeralNamespace, endpoint string, canaryGRPCPort in
 		),
 		fx.Provide(zap.NewDevelopment),
 		fx.Provide(log.NewLogger),
+		fx.Provide(clock.NewSMTimeSourceAdapter),
 
 		// We do decorate instead of Invoke because we want to start and stop the dispatcher at the
 		// correct time.

@@ -28,6 +28,7 @@ import (
 
 	"github.com/uber-go/tally"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 
 	"github.com/uber/cadence/common"
 	"github.com/uber/cadence/common/clock/clockfx"
@@ -72,6 +73,7 @@ type AppParams struct {
 	AppContext    config.Context
 	Config        config.Config
 	Logger        log.Logger
+	ZapLogger     *zap.Logger
 	LifeCycle     fx.Lifecycle
 	DynamicConfig dynamicconfig.Client
 	Scope         tally.Scope
@@ -83,6 +85,7 @@ func NewApp(params AppParams) *App {
 	app := &App{
 		cfg:           params.Config,
 		logger:        params.Logger,
+		zapLogger:     params.ZapLogger,
 		service:       params.Service,
 		dynamicConfig: params.DynamicConfig,
 		scope:         params.Scope,
@@ -100,6 +103,7 @@ type App struct {
 	cfg           config.Config
 	rootDir       string
 	logger        log.Logger
+	zapLogger     *zap.Logger
 	dynamicConfig dynamicconfig.Client
 	scope         tally.Scope
 	metricsClient metrics.Client
@@ -109,7 +113,7 @@ type App struct {
 }
 
 func (a *App) Start(_ context.Context) error {
-	a.daemon = newServer(a.service, a.cfg, a.logger, a.dynamicConfig, a.scope, a.metricsClient)
+	a.daemon = newServer(a.service, a.cfg, a.logger, a.zapLogger, a.dynamicConfig, a.scope, a.metricsClient)
 	a.daemon.Start()
 	return nil
 }

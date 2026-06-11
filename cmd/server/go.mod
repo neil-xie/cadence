@@ -52,7 +52,7 @@ require (
 	go.uber.org/multierr v1.11.0
 	go.uber.org/thriftrw v1.34.0 // indirect
 	go.uber.org/yarpc v1.88.0 // indirect
-	go.uber.org/zap v1.27.0 // indirect
+	go.uber.org/zap v1.27.0
 	golang.org/x/net v0.48.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/time v0.7.0 // indirect
@@ -64,6 +64,7 @@ require (
 )
 
 require (
+	github.com/cadence-workflow/shard-manager v0.0.0-20260608084258-925b1a8234ba
 	github.com/uber/cadence v0.0.0-00010101000000-000000000000
 	github.com/uber/cadence/common/archiver/gcloud v0.0.0-00010101000000-000000000000
 	go.uber.org/automaxprocs v1.6.0

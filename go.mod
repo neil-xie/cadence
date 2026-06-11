@@ -9,6 +9,7 @@ require (
 	github.com/VividCortex/mysqlerr v1.0.0
 	github.com/aws/aws-sdk-go v1.54.12
 	github.com/cactus/go-statsd-client/statsd v0.0.0-20191106001114-12b4e2b38748
+	github.com/cadence-workflow/shard-manager v0.0.0-20260608084258-925b1a8234ba
 	github.com/cch123/elasticsql v0.0.0-20190321073543-a1a440758eb9
 	github.com/dave/dst v0.26.2
 	github.com/davecgh/go-spew v1.1.1
@@ -37,7 +38,7 @@ require (
 	github.com/pborman/uuid v0.0.0-20180906182336-adf5a7427709
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/startreedata/pinot-client-go v0.2.0 // latest release supports pinot v0.12.0 which is also internal version
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/uber-go/tally v3.5.8+incompatible
 	github.com/uber/cadence-idl v0.0.0-20260609034356-3ee08a98cf70
 	github.com/uber/ringpop-go v0.10.0

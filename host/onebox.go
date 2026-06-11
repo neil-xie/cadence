@@ -27,6 +27,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/clientcommon"
+	smsdconfig "github.com/cadence-workflow/shard-manager/service/sharddistributor/config"
 	"github.com/pborman/uuid"
 	"github.com/uber-go/tally"
 	"github.com/uber-go/tally/prometheus"
@@ -35,6 +37,7 @@ import (
 	"go.uber.org/cadence/compatibility"
 	"go.uber.org/yarpc"
 	"go.uber.org/yarpc/api/transport"
+	"go.uber.org/zap"
 
 	adminClient "github.com/uber/cadence/client/admin"
 	frontendClient "github.com/uber/cadence/client/frontend"
@@ -72,8 +75,6 @@ import (
 	"github.com/uber/cadence/service/frontend"
 	"github.com/uber/cadence/service/history"
 	"github.com/uber/cadence/service/matching"
-	"github.com/uber/cadence/service/sharddistributor/client/clientcommon"
-	sdconfig "github.com/uber/cadence/service/sharddistributor/config"
 	"github.com/uber/cadence/service/worker"
 	"github.com/uber/cadence/service/worker/archiver"
 	"github.com/uber/cadence/service/worker/asyncworkflow"
@@ -106,6 +107,7 @@ type (
 		historyClient                 historyClient.Client
 		matchingClients               []matchingClient.Client
 		logger                        log.Logger
+		zapLogger                     *zap.Logger
 		clusterMetadata               cluster.Metadata
 		persistenceConfig             config.Persistence
 		messagingClient               messaging.Client
@@ -314,6 +316,7 @@ type (
 		ExecutionMgrFactory           persistence.ExecutionManagerFactory
 		DomainReplicationQueue        domain.ReplicationQueue
 		Logger                        log.Logger
+		ZapLogger                     *zap.Logger
 		ClusterNo                     int
 		ArchiverMetadata              carchiver.ArchivalMetadata
 		ArchiverProvider              provider.ArchiverProvider
@@ -343,6 +346,7 @@ type (
 func NewCadence(params *CadenceParams) Cadence {
 	return &cadenceImpl{
 		logger:                        params.Logger,
+		zapLogger:                     params.ZapLogger,
 		clusterMetadata:               params.ClusterMetadata,
 		persistenceConfig:             params.PersistenceConfig,
 		messagingClient:               params.MessagingClient,
@@ -678,6 +682,7 @@ func (c *cadenceImpl) startFrontend(hosts map[string][]membership.HostInfo, star
 	params.ClusterRedirectionPolicy = &config.ClusterRedirectionPolicy{}
 	params.Name = service.Frontend
 	params.Logger = c.logger
+	params.ZapLogger = c.zapLogger
 	params.ThrottledLogger = c.logger
 	params.TimeSource = c.timeSource
 	params.PProfInitializer = newPProfInitializerImpl(c.logger, c.FrontendPProfPort())
@@ -762,6 +767,7 @@ func (c *cadenceImpl) startHistory(hosts map[string][]membership.HostInfo, start
 		setOperationalDefaults(params)
 		params.Name = service.History
 		params.Logger = c.logger
+		params.ZapLogger = c.zapLogger
 		params.ThrottledLogger = c.logger
 		params.TimeSource = c.timeSource
 		params.PProfInitializer = newPProfInitializerImpl(c.logger, pprofPorts[i])
@@ -845,6 +851,7 @@ func (c *cadenceImpl) startMatching(hosts map[string][]membership.HostInfo, star
 		setOperationalDefaults(params)
 		params.Name = service.Matching
 		params.Logger = c.logger.WithTags(tag.Dynamic("matching-host", matchingHost))
+		params.ZapLogger = c.zapLogger
 		params.ThrottledLogger = c.logger
 		params.TimeSource = c.timeSource
 		params.PProfInitializer = newPProfInitializerImpl(c.logger, pprofPorts[i])
@@ -881,7 +888,7 @@ func (c *cadenceImpl) startMatching(hosts map[string][]membership.HostInfo, star
 			Namespaces: []clientcommon.NamespaceConfig{{
 				Namespace:         "cadence-matching-integration",
 				HeartBeatInterval: 1 * time.Second,
-				MigrationMode:     sdconfig.MigrationModeLOCALPASSTHROUGH,
+				MigrationMode:     smsdconfig.MigrationModeLOCALPASSTHROUGH,
 				TTLShard:          5 * time.Minute,
 				TTLReport:         1 * time.Minute,
 			}},
@@ -924,6 +931,7 @@ func (c *cadenceImpl) startWorker(hosts map[string][]membership.HostInfo, startW
 	setOperationalDefaults(params)
 	params.Name = service.Worker
 	params.Logger = c.logger
+	params.ZapLogger = c.zapLogger
 	params.ThrottledLogger = c.logger
 	params.TimeSource = c.timeSource
 	params.PProfInitializer = newPProfInitializerImpl(c.logger, c.WorkerPProfPort())

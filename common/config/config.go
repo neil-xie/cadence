@@ -27,6 +27,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/clientcommon"
 	"github.com/uber-go/tally/m3"
 	"github.com/uber-go/tally/prometheus"
 	yarpctls "go.uber.org/yarpc/api/transport/tls"
@@ -38,7 +39,6 @@ import (
 	"github.com/uber/cadence/common/metrics"
 	ringpopprovider "github.com/uber/cadence/common/peerprovider/ringpopprovider/config"
 	"github.com/uber/cadence/common/service"
-	"github.com/uber/cadence/service/sharddistributor/client/clientcommon"
 )
 
 type (
