@@ -34,7 +34,6 @@ import (
 
 	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/clientcommon"
 	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/executorclient"
-	smsdconfig "github.com/cadence-workflow/shard-manager/service/sharddistributor/config"
 	"github.com/pborman/uuid"
 	"github.com/stretchr/testify/suite"
 	"github.com/uber-go/tally"
@@ -1436,7 +1435,6 @@ func defaultSDExecutorConfig() clientcommon.Config {
 		Namespaces: []clientcommon.NamespaceConfig{{
 			Namespace:         "cadence-matching",
 			HeartBeatInterval: 1 * time.Second,
-			MigrationMode:     smsdconfig.MigrationModeONBOARDED,
 			TTLShard:          5 * time.Minute,
 			TTLReport:         1 * time.Minute,
 		}},

@@ -28,7 +28,6 @@ import (
 	"time"
 
 	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/clientcommon"
-	smsdconfig "github.com/cadence-workflow/shard-manager/service/sharddistributor/config"
 	"github.com/pborman/uuid"
 	"github.com/uber-go/tally"
 	"github.com/uber-go/tally/prometheus"
@@ -888,7 +887,6 @@ func (c *cadenceImpl) startMatching(hosts map[string][]membership.HostInfo, star
 			Namespaces: []clientcommon.NamespaceConfig{{
 				Namespace:         "cadence-matching-integration",
 				HeartBeatInterval: 1 * time.Second,
-				MigrationMode:     smsdconfig.MigrationModeLOCALPASSTHROUGH,
 				TTLShard:          5 * time.Minute,
 				TTLReport:         1 * time.Minute,
 			}},

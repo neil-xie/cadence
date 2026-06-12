@@ -50,8 +50,8 @@ func TestModule(t *testing.T) {
 
 	config := clientcommon.Config{
 		Namespaces: []clientcommon.NamespaceConfig{
-			{Namespace: "shard-distributor-canary", HeartBeatInterval: 5 * time.Second, MigrationMode: "onboarded"},
-			{Namespace: "shard-distributor-canary-ephemeral", HeartBeatInterval: 5 * time.Second, MigrationMode: "onboarded"},
+			{Namespace: "shard-distributor-canary", HeartBeatInterval: 5 * time.Second},
+			{Namespace: "shard-distributor-canary-ephemeral", HeartBeatInterval: 5 * time.Second},
 		},
 	}
 

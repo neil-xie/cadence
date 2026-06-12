@@ -64,7 +64,7 @@ require (
 )
 
 require (
-	github.com/cadence-workflow/shard-manager v0.0.0-20260608084258-925b1a8234ba
+	github.com/cadence-workflow/shard-manager v0.0.0-20260610143419-4bef35311802
 	github.com/uber/cadence v0.0.0-00010101000000-000000000000
 	github.com/uber/cadence/common/archiver/gcloud v0.0.0-00010101000000-000000000000
 	go.uber.org/automaxprocs v1.6.0

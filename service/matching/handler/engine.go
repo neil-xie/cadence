@@ -237,6 +237,7 @@ func (e *matchingEngineImpl) setupExecutor(shardDistributorExecutorClient execut
 		ShardProcessorFactory: taskListFactory,
 		Config:                cfg,
 		TimeSource:            smTimeSource,
+		Enabled:               e.shardDistributorOnboarded,
 		Metadata: map[string]string{
 			"tchannel": fmt.Sprintf("%d", e.config.RPCConfig.Port),
 			"grpc":     fmt.Sprintf("%d", e.config.RPCConfig.GRPCPort),
@@ -250,6 +251,13 @@ func (e *matchingEngineImpl) setupExecutor(shardDistributorExecutorClient execut
 	}
 
 	e.executor = executor
+}
+
+// shardDistributorOnboarded reports whether this matching host should heartbeat
+// to the shard distributor, gated on the onboarding percentage. It is consulted
+// on every heartbeat tick, so driving the percentage to 0 offboards the executor.
+func (e *matchingEngineImpl) shardDistributorOnboarded() bool {
+	return e.percentageOnboarded.Value() > 0
 }
 
 func (e *matchingEngineImpl) getValidatedShardDistributorConfig() (clientcommon.Config, time.Duration) {

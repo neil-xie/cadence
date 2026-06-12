@@ -1921,6 +1921,29 @@ func TestSetupExecutorWithEmptyConfig(t *testing.T) {
 	require.NotNil(t, engine.executor)
 	require.NotNil(t, engine.taskListsFactory)
 
-	// The no-op executor reports itself as not onboarded to SD.
-	assert.False(t, engine.executor.IsOnboardedToSD())
+	// The no-op executor owns no shards, so any lookup falls back to local
+	// hash-ring ownership by returning ErrShardProcessNotFound.
+	_, err := engine.executor.GetShardProcess(context.Background(), "any-shard")
+	assert.ErrorIs(t, err, executorclient.ErrShardProcessNotFound)
+}
+
+func TestShardDistributorOnboarded(t *testing.T) {
+	tests := []struct {
+		name       string
+		percentage int
+		want       bool
+	}{
+		{name: "offboarded at zero", percentage: 0, want: false},
+		{name: "onboarded above zero", percentage: 1, want: true},
+		{name: "onboarded at full", percentage: 100, want: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			pct := membership.NewMockPercentageOnboarded(ctrl)
+			pct.EXPECT().Value().Return(tt.percentage)
+			engine := &matchingEngineImpl{percentageOnboarded: pct}
+			assert.Equal(t, tt.want, engine.shardDistributorOnboarded())
+		})
+	}
 }

@@ -170,10 +170,7 @@ func (s *server) startService() common.Daemon {
 	)
 	params.PercentageOnboarded = membership.NewPercentageOnboarded(
 		params.MetricsClient,
-		dc.GetIntProperty(dynamicproperties.MatchingPercentageOnboardedToShardManager),
 		operationalDC.GetIntProperty(dynamicproperties.MatchingPercentageOnboardedToShardManager),
-		operationalDC.GetBoolProperty(dynamicproperties.MatchingPercentageOnboardedReadFromOperationalStore),
-		dc.GetBoolProperty(dynamicproperties.MatchingEmergencyOffboardingFromShardManager),
 	)
 
 	rpcParams, err := rpc.NewParams(params.Name, &s.cfg, dc, params.Logger, params.MetricsClient)

@@ -111,7 +111,6 @@ func TestNewExecutor_InvalidConfig(t *testing.T) {
 						{
 							Namespace:         "wrong-namespace",
 							HeartBeatInterval: 5 * time.Second,
-							MigrationMode:     "onboarded",
 						},
 					},
 				},
@@ -193,7 +192,6 @@ func createMockParams[SP executorclient.ShardProcessor](
 				{
 					Namespace:         namespace,
 					HeartBeatInterval: 5 * time.Second,
-					MigrationMode:     "onboarded",
 				},
 			},
 		},

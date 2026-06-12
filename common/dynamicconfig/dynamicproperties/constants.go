@@ -2393,23 +2393,6 @@ const (
 	// Default value: true
 	// Allowed filters: N/A
 	MatchingExcludeShortLivedTaskListsFromShardManager
-	// MatchingEmergencyOffboardingFromShardManager is a kill switch to immediately offboard all task lists from the shard manager.
-	// When true, all task lists fall back to the hash ring, ignoring MatchingPercentageOnboardedToShardManager.
-	// KeyName: matching.emergencyOffboardingFromShardManager
-	// Value type: Bool
-	// Default value: false
-	// Allowed filters: N/A
-	MatchingEmergencyOffboardingFromShardManager
-	// MatchingPercentageOnboardedReadFromOperationalStore selects the source of
-	// MatchingPercentageOnboardedToShardManager during the migration to the cassandra-backed
-	// operational dynamic config store.
-	// When false (default), cadence reads the value from the generic dynamic config.
-	// When true, cadence reads the value from the operational dynamic config store.
-	// KeyName: matching.percentageOnboardedReadFromOperationalStore
-	// Value type: Bool
-	// Default value: false
-	// Allowed filters: N/A
-	MatchingPercentageOnboardedReadFromOperationalStore
 
 	// EnableHierarchicalWeightedRoundRobinTaskScheduler is to enable hierarchical weighted round robin task scheduler
 	// KeyName: history.enableHierarchicalWeightedRoundRobinTaskScheduler
@@ -5242,16 +5225,6 @@ var BoolKeys = map[BoolKey]DynamicBool{
 		KeyName:      "matching.excludeShortLivedTaskListsFromShardManager",
 		Description:  "MatchingExcludeShortLivedTaskListsFromShardManager excludes short-lived task lists (e.g. bits task lists and sticky task lists) from the shard manager",
 		DefaultValue: true,
-	},
-	MatchingEmergencyOffboardingFromShardManager: {
-		KeyName:      "matching.emergencyOffboardingFromShardManager",
-		Description:  "MatchingEmergencyOffboardingFromShardManager is a kill switch to immediately offboard all task lists from the shard manager, ignoring the onboarding percentage",
-		DefaultValue: false,
-	},
-	MatchingPercentageOnboardedReadFromOperationalStore: {
-		KeyName:      "matching.percentageOnboardedReadFromOperationalStore",
-		Description:  "MatchingPercentageOnboardedReadFromOperationalStore selects the source of MatchingPercentageOnboardedToShardManager: false (default) reads from the generic dynamic config, true reads from the cassandra-backed operational dynamic config store",
-		DefaultValue: false,
 	},
 	EnableHierarchicalWeightedRoundRobinTaskScheduler: {
 		KeyName:      "history.enableHierarchicalWeightedRoundRobinTaskScheduler",

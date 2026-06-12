@@ -10,7 +10,6 @@ import (
 	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/clientcommon"
 	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/executorclient"
 	"github.com/cadence-workflow/shard-manager/service/sharddistributor/client/spectatorclient"
-	smsdconfig "github.com/cadence-workflow/shard-manager/service/sharddistributor/config"
 	"github.com/uber-go/tally"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/fx"
@@ -59,8 +58,8 @@ func runApp(c *cli.Context) {
 func opts(fixedNamespace, ephemeralNamespace, endpoint string, canaryGRPCPort int, numFixedExecutors, numEphemeral int) fx.Option {
 	configuration := clientcommon.Config{
 		Namespaces: []clientcommon.NamespaceConfig{
-			{Namespace: fixedNamespace, HeartBeatInterval: 1 * time.Second, MigrationMode: smsdconfig.MigrationModeONBOARDED},
-			{Namespace: ephemeralNamespace, HeartBeatInterval: 1 * time.Second, MigrationMode: smsdconfig.MigrationModeONBOARDED},
+			{Namespace: fixedNamespace, HeartBeatInterval: 1 * time.Second},
+			{Namespace: ephemeralNamespace, HeartBeatInterval: 1 * time.Second},
 		},
 	}
 
